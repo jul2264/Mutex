@@ -1,0 +1,201 @@
+order_id,order_date,product_name,category,region,quantity,unit_price,unit_cost
+ORD-1000,2025-01-01,Bookshelf 5-Tier,Furniture,West,6,6000.00,3900.00
+ORD-1000,2025-01-02,Sticky Notes Pack,Office Supplies,East,11,120.00,84.00
+ORD-1001,2025-01-04,Desk Pad Leather,Accessories,South,1,800.00,600.00
+ORD-1002,2025-01-06,Webcam HD,Electronics,North,6,2200.00,1760.00
+ORD-1003,2025-01-08,Standing Desk Pro,Furniture,West,11,18000.00,10800.00
+ORD-1003,2025-01-10,Heavy Duty Stapler,Office Supplies,East,1,450.00,292.50
+ORD-1004,2025-01-11,Screen Cleaning Kit,Accessories,South,6,250.00,175.00
+ORD-1005,2025-01-13,Wireless Mouse,Electronics,North,11,450.00,337.50
+ORD-1006,2025-01-15,Footrest Ergonomic,Furniture,West,1,1200.00,960.00
+ORD-1006,2025-01-17,Whiteboard 4x3,Office Supplies,East,6,2400.00,1440.00
+ORD-1007,2025-01-19,Desk Pad Leather,Accessories,South,11,800.00,520.00
+ORD-1008,2025-01-20,Webcam HD,Electronics,North,1,2200.00,1540.00
+ORD-1009,2025-01-22,Meeting Table,Furniture,West,6,12000.00,9000.00
+ORD-1010,2025-01-24,A4 Copy Paper Box,Office Supplies,East,11,1100.00,880.00
+ORD-1010,2025-01-26,Screen Cleaning Kit,Accessories,South,1,250.00,150.00
+ORD-1011,2025-01-28,Wireless Mouse,Electronics,North,6,450.00,292.50
+ORD-1012,2025-01-29,Filing Cabinet,Furniture,West,11,4500.00,3150.00
+ORD-1013,2025-01-31,Document Tray 3-Tier,Office Supplies,East,1,750.00,562.50
+ORD-1013,2025-02-02,Desk Pad Leather,Accessories,South,6,800.00,640.00
+ORD-1014,2025-02-04,Webcam HD,Electronics,North,11,2200.00,1320.00
+ORD-1015,2025-02-06,Office Ergonomic Chair,Furniture,West,1,8500.00,5525.00
+ORD-1016,2025-02-07,Dry Erase Markers,Office Supplies,East,6,250.00,175.00
+ORD-1016,2025-02-09,Screen Cleaning Kit,Accessories,South,11,250.00,187.50
+ORD-1017,2025-02-11,Wireless Mouse,Electronics,North,1,450.00,360.00
+ORD-1018,2025-02-13,Mesh Executive Chair,Furniture,West,6,9500.00,5700.00
+ORD-1019,2025-02-15,Gel Pen Pack (10x),Office Supplies,East,11,150.00,97.50
+ORD-1020,2025-02-16,Desk Pad Leather,Accessories,South,1,800.00,560.00
+ORD-1020,2025-02-18,Webcam HD,Electronics,North,6,2200.00,1650.00
+ORD-1021,2025-02-20,Bookshelf 5-Tier,Furniture,West,11,6000.00,4800.00
+ORD-1022,2025-02-22,Sticky Notes Pack,Office Supplies,East,1,120.00,72.00
+ORD-1023,2025-02-24,Screen Cleaning Kit,Accessories,South,6,250.00,162.50
+ORD-1023,2025-02-25,Wireless Mouse,Electronics,North,11,450.00,315.00
+ORD-1024,2025-02-27,Standing Desk Pro,Furniture,West,1,18000.00,13500.00
+ORD-1025,2025-03-01,Heavy Duty Stapler,Office Supplies,East,6,450.00,360.00
+ORD-1026,2025-03-03,Desk Pad Leather,Accessories,South,11,800.00,480.00
+ORD-1026,2025-03-05,Webcam HD,Electronics,North,1,2200.00,1430.00
+ORD-1027,2025-03-06,Footrest Ergonomic,Furniture,West,6,1200.00,840.00
+ORD-1028,2025-03-08,Whiteboard 4x3,Office Supplies,East,11,2400.00,1800.00
+ORD-1029,2025-03-10,Screen Cleaning Kit,Accessories,South,1,250.00,200.00
+ORD-1030,2025-03-12,Wireless Mouse,Electronics,North,6,450.00,270.00
+ORD-1030,2025-03-14,Meeting Table,Furniture,West,11,12000.00,7800.00
+ORD-1031,2025-03-15,A4 Copy Paper Box,Office Supplies,East,1,1100.00,770.00
+ORD-1032,2025-03-17,Desk Pad Leather,Accessories,South,6,800.00,600.00
+ORD-1033,2025-03-19,Webcam HD,Electronics,North,11,2200.00,1760.00
+ORD-1033,2025-03-21,Filing Cabinet,Furniture,West,1,4500.00,2700.00
+ORD-1034,2025-03-23,Document Tray 3-Tier,Office Supplies,East,6,750.00,487.50
+ORD-1035,2025-03-24,Screen Cleaning Kit,Accessories,South,11,250.00,175.00
+ORD-1036,2025-03-26,Wireless Mouse,Electronics,North,1,450.00,337.50
+ORD-1036,2025-03-28,Office Ergonomic Chair,Furniture,West,6,8500.00,6800.00
+ORD-1037,2025-03-30,Dry Erase Markers,Office Supplies,East,11,250.00,150.00
+ORD-1038,2025-04-01,Desk Pad Leather,Accessories,South,1,800.00,520.00
+ORD-1039,2025-04-02,Webcam HD,Electronics,North,6,2200.00,1540.00
+ORD-1040,2025-04-04,Mesh Executive Chair,Furniture,West,11,9500.00,7125.00
+ORD-1040,2025-04-06,Gel Pen Pack (10x),Office Supplies,East,1,150.00,120.00
+ORD-1041,2025-04-08,Screen Cleaning Kit,Accessories,South,6,250.00,150.00
+ORD-1042,2025-04-10,Wireless Mouse,Electronics,North,11,450.00,292.50
+ORD-1043,2025-04-11,Bookshelf 5-Tier,Furniture,West,1,6000.00,4200.00
+ORD-1043,2025-04-13,Sticky Notes Pack,Office Supplies,East,6,120.00,90.00
+ORD-1044,2025-04-15,Desk Pad Leather,Accessories,South,11,800.00,640.00
+ORD-1045,2025-04-17,Webcam HD,Electronics,North,1,2200.00,1320.00
+ORD-1046,2025-04-19,Standing Desk Pro,Furniture,West,6,18000.00,11700.00
+ORD-1046,2025-04-20,Heavy Duty Stapler,Office Supplies,East,11,450.00,315.00
+ORD-1047,2025-04-22,Screen Cleaning Kit,Accessories,South,1,250.00,187.50
+ORD-1048,2025-04-24,Wireless Mouse,Electronics,North,6,450.00,360.00
+ORD-1049,2025-04-26,Footrest Ergonomic,Furniture,West,11,1200.00,720.00
+ORD-1050,2025-04-28,Whiteboard 4x3,Office Supplies,East,1,2400.00,1560.00
+ORD-1050,2025-04-29,Desk Pad Leather,Accessories,South,6,800.00,560.00
+ORD-1051,2025-05-01,Webcam HD,Electronics,North,11,2200.00,1650.00
+ORD-1052,2025-05-03,Meeting Table,Furniture,West,1,12000.00,9600.00
+ORD-1053,2025-05-05,A4 Copy Paper Box,Office Supplies,East,6,1100.00,660.00
+ORD-1053,2025-05-07,Screen Cleaning Kit,Accessories,South,11,250.00,162.50
+ORD-1054,2025-05-08,Wireless Mouse,Electronics,North,1,450.00,315.00
+ORD-1055,2025-05-10,Filing Cabinet,Furniture,West,6,4500.00,3375.00
+ORD-1056,2025-05-12,Document Tray 3-Tier,Office Supplies,East,11,750.00,600.00
+ORD-1056,2025-05-14,Desk Pad Leather,Accessories,South,1,800.00,480.00
+ORD-1057,2025-05-16,Webcam HD,Electronics,North,6,2200.00,1430.00
+ORD-1058,2025-05-17,Office Ergonomic Chair,Furniture,West,11,8500.00,5950.00
+ORD-1059,2025-05-19,Dry Erase Markers,Office Supplies,East,1,250.00,187.50
+ORD-1060,2025-05-21,Screen Cleaning Kit,Accessories,South,6,250.00,200.00
+ORD-1060,2025-05-23,Wireless Mouse,Electronics,North,11,450.00,270.00
+ORD-1061,2025-05-25,Mesh Executive Chair,Furniture,West,1,9500.00,6175.00
+ORD-1062,2025-05-26,Gel Pen Pack (10x),Office Supplies,East,6,150.00,105.00
+ORD-1063,2025-05-28,Desk Pad Leather,Accessories,South,11,800.00,600.00
+ORD-1063,2025-05-30,Webcam HD,Electronics,North,1,2200.00,1760.00
+ORD-1064,2025-06-01,Bookshelf 5-Tier,Furniture,West,6,6000.00,3600.00
+ORD-1065,2025-06-03,Sticky Notes Pack,Office Supplies,East,11,120.00,78.00
+ORD-1066,2025-06-04,Screen Cleaning Kit,Accessories,South,1,250.00,175.00
+ORD-1066,2025-06-06,Wireless Mouse,Electronics,North,6,450.00,337.50
+ORD-1067,2025-06-08,Standing Desk Pro,Furniture,West,11,18000.00,14400.00
+ORD-1068,2025-06-10,Heavy Duty Stapler,Office Supplies,East,1,450.00,270.00
+ORD-1069,2025-06-12,Desk Pad Leather,Accessories,South,6,800.00,520.00
+ORD-1070,2025-06-13,Webcam HD,Electronics,North,11,2200.00,1540.00
+ORD-1070,2025-06-15,Footrest Ergonomic,Furniture,West,1,1200.00,900.00
+ORD-1071,2025-06-17,Whiteboard 4x3,Office Supplies,East,6,2400.00,1920.00
+ORD-1072,2025-06-19,Screen Cleaning Kit,Accessories,South,11,250.00,150.00
+ORD-1073,2025-06-21,Wireless Mouse,Electronics,North,1,450.00,292.50
+ORD-1073,2025-06-22,Meeting Table,Furniture,West,6,12000.00,8400.00
+ORD-1074,2025-06-24,A4 Copy Paper Box,Office Supplies,East,11,1100.00,825.00
+ORD-1075,2025-06-26,Desk Pad Leather,Accessories,South,1,800.00,640.00
+ORD-1076,2025-06-28,Webcam HD,Electronics,North,6,2200.00,1320.00
+ORD-1076,2025-06-30,Filing Cabinet,Furniture,West,11,4500.00,2925.00
+ORD-1077,2025-07-01,Document Tray 3-Tier,Office Supplies,East,1,750.00,525.00
+ORD-1078,2025-07-03,Screen Cleaning Kit,Accessories,South,6,250.00,187.50
+ORD-1079,2025-07-05,Wireless Mouse,Electronics,North,11,450.00,360.00
+ORD-1080,2025-07-07,Office Ergonomic Chair,Furniture,West,1,8500.00,5100.00
+ORD-1080,2025-07-09,Dry Erase Markers,Office Supplies,East,6,250.00,162.50
+ORD-1081,2025-07-10,Desk Pad Leather,Accessories,South,11,800.00,560.00
+ORD-1082,2025-07-12,Webcam HD,Electronics,North,1,2200.00,1650.00
+ORD-1083,2025-07-14,Mesh Executive Chair,Furniture,West,6,9500.00,7600.00
+ORD-1083,2025-07-16,Gel Pen Pack (10x),Office Supplies,East,11,150.00,90.00
+ORD-1084,2025-07-18,Screen Cleaning Kit,Accessories,South,1,250.00,162.50
+ORD-1085,2025-07-19,Wireless Mouse,Electronics,North,6,450.00,315.00
+ORD-1086,2025-07-21,Bookshelf 5-Tier,Furniture,West,11,6000.00,4500.00
+ORD-1086,2025-07-23,Sticky Notes Pack,Office Supplies,East,1,120.00,96.00
+ORD-1087,2025-07-25,Desk Pad Leather,Accessories,South,6,800.00,480.00
+ORD-1088,2025-07-27,Webcam HD,Electronics,North,11,2200.00,1430.00
+ORD-1089,2025-07-28,Standing Desk Pro,Furniture,West,1,18000.00,12600.00
+ORD-1090,2025-07-30,Heavy Duty Stapler,Office Supplies,East,6,450.00,337.50
+ORD-1090,2025-08-01,Screen Cleaning Kit,Accessories,South,11,250.00,200.00
+ORD-1091,2025-08-03,Wireless Mouse,Electronics,North,1,450.00,270.00
+ORD-1092,2025-08-05,Footrest Ergonomic,Furniture,West,6,1200.00,780.00
+ORD-1093,2025-08-06,Whiteboard 4x3,Office Supplies,East,11,2400.00,1680.00
+ORD-1093,2025-08-08,Desk Pad Leather,Accessories,South,1,800.00,600.00
+ORD-1094,2025-08-10,Webcam HD,Electronics,North,6,2200.00,1760.00
+ORD-1095,2025-08-12,Meeting Table,Furniture,West,11,12000.00,7200.00
+ORD-1096,2025-08-14,A4 Copy Paper Box,Office Supplies,East,1,1100.00,715.00
+ORD-1096,2025-08-15,Screen Cleaning Kit,Accessories,South,6,250.00,175.00
+ORD-1097,2025-08-17,Wireless Mouse,Electronics,North,11,450.00,337.50
+ORD-1098,2025-08-19,Filing Cabinet,Furniture,West,1,4500.00,3600.00
+ORD-1099,2025-08-21,Document Tray 3-Tier,Office Supplies,East,6,750.00,450.00
+ORD-1100,2025-08-23,Desk Pad Leather,Accessories,South,11,800.00,520.00
+ORD-1100,2025-08-24,Webcam HD,Electronics,North,1,2200.00,1540.00
+ORD-1101,2025-08-26,Office Ergonomic Chair,Furniture,West,6,8500.00,6375.00
+ORD-1102,2025-08-28,Dry Erase Markers,Office Supplies,East,11,250.00,200.00
+ORD-1103,2025-08-30,Screen Cleaning Kit,Accessories,South,1,250.00,150.00
+ORD-1103,2025-09-01,Wireless Mouse,Electronics,North,6,450.00,292.50
+ORD-1104,2025-09-02,Mesh Executive Chair,Furniture,West,11,9500.00,6650.00
+ORD-1105,2025-09-04,Gel Pen Pack (10x),Office Supplies,East,1,150.00,112.50
+ORD-1106,2025-09-06,Desk Pad Leather,Accessories,South,6,800.00,640.00
+ORD-1106,2025-09-08,Webcam HD,Electronics,North,11,2200.00,1320.00
+ORD-1107,2025-09-10,Bookshelf 5-Tier,Furniture,West,1,6000.00,3900.00
+ORD-1108,2025-09-11,Sticky Notes Pack,Office Supplies,East,6,120.00,84.00
+ORD-1109,2025-09-13,Screen Cleaning Kit,Accessories,South,11,250.00,187.50
+ORD-1110,2025-09-15,Wireless Mouse,Electronics,North,1,450.00,360.00
+ORD-1110,2025-09-17,Standing Desk Pro,Furniture,West,6,18000.00,10800.00
+ORD-1111,2025-09-19,Heavy Duty Stapler,Office Supplies,East,11,450.00,292.50
+ORD-1112,2025-09-20,Desk Pad Leather,Accessories,South,1,800.00,560.00
+ORD-1113,2025-09-22,Webcam HD,Electronics,North,6,2200.00,1650.00
+ORD-1113,2025-09-24,Footrest Ergonomic,Furniture,West,11,1200.00,960.00
+ORD-1114,2025-09-26,Whiteboard 4x3,Office Supplies,East,1,2400.00,1440.00
+ORD-1115,2025-09-28,Screen Cleaning Kit,Accessories,South,6,250.00,162.50
+ORD-1116,2025-09-29,Wireless Mouse,Electronics,North,11,450.00,315.00
+ORD-1116,2025-10-01,Meeting Table,Furniture,West,1,12000.00,9000.00
+ORD-1117,2025-10-03,A4 Copy Paper Box,Office Supplies,East,6,1100.00,880.00
+ORD-1118,2025-10-05,Desk Pad Leather,Accessories,South,11,800.00,480.00
+ORD-1119,2025-10-07,Webcam HD,Electronics,North,1,2200.00,1430.00
+ORD-1120,2025-10-08,Filing Cabinet,Furniture,West,6,4500.00,3150.00
+ORD-1120,2025-10-10,Document Tray 3-Tier,Office Supplies,East,11,750.00,562.50
+ORD-1121,2025-10-12,Screen Cleaning Kit,Accessories,South,1,250.00,200.00
+ORD-1122,2025-10-14,Wireless Mouse,Electronics,North,6,450.00,270.00
+ORD-1123,2025-10-16,Office Ergonomic Chair,Furniture,West,11,8500.00,5525.00
+ORD-1123,2025-10-17,Dry Erase Markers,Office Supplies,East,1,250.00,175.00
+ORD-1124,2025-10-19,Desk Pad Leather,Accessories,South,6,800.00,600.00
+ORD-1125,2025-10-21,Webcam HD,Electronics,North,11,2200.00,1760.00
+ORD-1126,2025-10-23,Mesh Executive Chair,Furniture,West,1,9500.00,5700.00
+ORD-1126,2025-10-25,Gel Pen Pack (10x),Office Supplies,East,6,150.00,97.50
+ORD-1127,2025-10-26,Screen Cleaning Kit,Accessories,South,11,250.00,175.00
+ORD-1128,2025-10-28,Wireless Mouse,Electronics,North,1,450.00,337.50
+ORD-1129,2025-10-30,Bookshelf 5-Tier,Furniture,West,6,6000.00,4800.00
+ORD-1130,2025-11-01,Sticky Notes Pack,Office Supplies,East,11,120.00,72.00
+ORD-1130,2025-11-03,Desk Pad Leather,Accessories,South,1,800.00,520.00
+ORD-1131,2025-11-04,Webcam HD,Electronics,North,6,2200.00,1540.00
+ORD-1132,2025-11-06,Standing Desk Pro,Furniture,West,11,18000.00,13500.00
+ORD-1133,2025-11-08,Heavy Duty Stapler,Office Supplies,East,1,450.00,360.00
+ORD-1133,2025-11-10,Screen Cleaning Kit,Accessories,South,6,250.00,150.00
+ORD-1134,2025-11-12,Wireless Mouse,Electronics,North,11,450.00,292.50
+ORD-1135,2025-11-13,Footrest Ergonomic,Furniture,West,1,1200.00,840.00
+ORD-1136,2025-11-15,Whiteboard 4x3,Office Supplies,East,6,2400.00,1800.00
+ORD-1136,2025-11-17,Desk Pad Leather,Accessories,South,11,800.00,640.00
+ORD-1137,2025-11-19,Webcam HD,Electronics,North,1,2200.00,1320.00
+ORD-1138,2025-11-21,Meeting Table,Furniture,West,6,12000.00,7800.00
+ORD-1139,2025-11-22,A4 Copy Paper Box,Office Supplies,East,11,1100.00,770.00
+ORD-1140,2025-11-24,Screen Cleaning Kit,Accessories,South,1,250.00,187.50
+ORD-1140,2025-11-26,Wireless Mouse,Electronics,North,6,450.00,360.00
+ORD-1141,2025-11-28,Filing Cabinet,Furniture,West,11,4500.00,2700.00
+ORD-1142,2025-11-30,Document Tray 3-Tier,Office Supplies,East,1,750.00,487.50
+ORD-1143,2025-12-01,Desk Pad Leather,Accessories,South,6,800.00,560.00
+ORD-1143,2025-12-03,Webcam HD,Electronics,North,11,2200.00,1650.00
+ORD-1144,2025-12-05,Office Ergonomic Chair,Furniture,West,1,8500.00,6800.00
+ORD-1145,2025-12-07,Dry Erase Markers,Office Supplies,East,6,250.00,150.00
+ORD-1146,2025-12-09,Screen Cleaning Kit,Accessories,South,11,250.00,162.50
+ORD-1146,2025-12-10,Wireless Mouse,Electronics,North,1,450.00,315.00
+ORD-1147,2025-12-12,Mesh Executive Chair,Furniture,West,6,9500.00,7125.00
+ORD-1148,2025-12-14,Gel Pen Pack (10x),Office Supplies,East,11,150.00,120.00
+ORD-1149,2025-12-16,Desk Pad Leather,Accessories,South,1,800.00,480.00
+ORD-1150,2025-12-18,Webcam HD,Electronics,North,6,2200.00,1430.00
+ORD-1150,2025-12-19,Bookshelf 5-Tier,Furniture,West,11,6000.00,4200.00
+ORD-1151,2025-12-21,Sticky Notes Pack,Office Supplies,East,1,120.00,90.00
+ORD-1152,2025-12-23,Screen Cleaning Kit,Accessories,South,6,250.00,200.00
+ORD-1153,2025-12-25,Wireless Mouse,Electronics,North,11,450.00,270.00

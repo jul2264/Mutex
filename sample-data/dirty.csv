@@ -1,0 +1,17 @@
+order_id,order_date,product_name,category,region,quantity,unit_price,unit_cost,extra_notes
+ORD-2001,2026-01-10,Wireless Mouse,Electronics,North,2,450.00,300.00,Ignored note
+ORD-2002,not-a-date,Mechanical Keyboard,Electronics,South,1,2500.00,1800.00,Invalid date
+ORD-2003,2026-01-12,USB-C Hub,Electronics,East,0,800.00,500.00,Quantity zero
+ORD-2004,2026-01-14,Monitor Arm,Accessories,West,2.5,1500.00,1000.00,Fractional quantity
+ORD-2005,2026-01-15,Bulk Cable Clip,Accessories,North,1000001,10.00,5.00,Quantity too large
+ORD-2006,2026-01-16,,Office,South,5,120.00,80.00,Missing product name
+ORD-2007,2026-01-17,Desk Pad,Office,East,1,-500.00,300.00,Negative price
+ORD-2008,2026-01-18,Executive Chair,Furniture,West,1,"₹1,200.00",800.00,Valid currency symbol
+ORD-2009,2026-01-19,Webcam HD,  electronics  ,North,3,1500.00,1100.00,Whitespace normalized
+ORD-2001,2026-01-10,Wireless Mouse,Electronics,North,2,450.00,300.00,Exact duplicate row
+ORD-2010,2026-01-20,Laptop Stand,Accessories,South,1,1200.00,1400.00,Cost exceeds price warning
+ORD-2011,2026-01-21,Bluetooth Speaker,Electronics,East,2,2000.00,1500.00,Line 1 of order 2011
+ORD-2011,2026-01-21,Audio Cable,Electronics,East,1,300.00,150.00,Line 2 of order 2011
+
+ORD-2012,2026-01-22,Desk Lamp,Lighting,West,2,800.00,500.00,Valid row after blank line
+

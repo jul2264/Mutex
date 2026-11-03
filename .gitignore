@@ -1,0 +1,45 @@
+# Environment & Secrets (NEVER COMMIT)
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+target/
+build/
+dist/
+out/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.swp
+*~
+
+# Project Specific
+AGENTS.md
+DESIGN.md
+BI & KPI Analytics Platform — Implementation Blueprint.md
+User Stories.md
