@@ -16,5 +16,6 @@
 | **React Hook Form** | 7.x | `package.json` | Form state management. |
 | **Zod** | 3.x | `package.json` | Schema validation at API boundaries. |
 | **Recharts** | 2.x | `package.json` | Visualizations. |
+| **Vitest** | 5.x | `package.json` | Unit test runner for frontend. |
 | **Docker Engine** | 29.x | Docker Desktop | Docker Compose v2 for local DB and deployment. |
 

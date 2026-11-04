@@ -47,3 +47,12 @@ The frontend is available at `http://localhost:5173`, proxying `/api` requests t
 - **Units Sold:** 15
 - **Orders:** 2
 - **Line Items:** 2
+
+## Test Verification
+
+| Milestone | Command | Date | Result |
+|---|---|---|---|
+| M1 Foundation | `cd backend && ./mvnw test` | 2026-11-04 | BUILD SUCCESS: Testcontainers integration test verified against PostgreSQL 17 |
+| M2 First KPI | `cd backend && ./mvnw verify`<br>`cd frontend && npm run lint && npm run typecheck && npm run test && npm run build` | 2026-11-04 | BUILD SUCCESS: Backend surefire + failsafe tests (KpiCalculatorTest, AnalyticsIT, BackendApplicationTests) passed against Testcontainers; frontend vitest, typecheck, lint, and build verified |
+
+
