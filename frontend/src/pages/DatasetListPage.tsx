@@ -109,6 +109,13 @@ export const DatasetListPage: React.FC = () => {
               Manage uploaded sales files, review data quality, and explore KPI analytics.
             </p>
           </div>
+          <Link
+            to="/datasets/upload"
+            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg bg-black text-white hover:bg-black/85 transition-colors shadow-xs"
+          >
+            <span className="text-sm leading-none">+</span>
+            <span>Upload Dataset</span>
+          </Link>
         </div>
 
         {/* Dataset Table / List */}
@@ -125,9 +132,16 @@ export const DatasetListPage: React.FC = () => {
                 📁
               </div>
               <h3 className="text-sm font-semibold text-[#37352f]">No datasets yet</h3>
-              <p className="text-xs text-[#757575] mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-[#757575] mt-1 max-w-sm mx-auto mb-4">
                 Upload a CSV or XLSX spreadsheet to start exploring your business metrics.
               </p>
+              <Link
+                to="/datasets/upload"
+                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg bg-black text-white hover:bg-black/85 transition-colors shadow-xs"
+              >
+                <span className="text-sm leading-none">+</span>
+                <span>Upload Dataset</span>
+              </Link>
             </div>
           ) : (
             <div className="overflow-x-auto">
