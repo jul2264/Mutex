@@ -241,4 +241,27 @@ class AuthorizationMatrixIT {
                     .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
         }
     }
+
+    @Test
+    @DisplayName("M8 matrix: Anonymous access to reports export endpoint returns 401")
+    void m8_anonymousReportsExport_returns401() throws Exception {
+        mockMvc.perform(get("/api/datasets/{id}/reports/export", USER_A_DATASET_ID)
+                        .param("format", "csv")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status", is(401)))
+                .andExpect(jsonPath("$.code", is("UNAUTHORIZED")));
+    }
+
+    @Test
+    @DisplayName("M8 matrix: User B accessing User A's reports export endpoint returns 404 DATASET_NOT_FOUND, never 403")
+    void m8_foreignDatasetReportsExport_returns404Not403() throws Exception {
+        mockMvc.perform(get("/api/datasets/{id}/reports/export", USER_A_DATASET_ID)
+                        .param("format", "csv")
+                        .with(user("user.b@example.com").roles("ANALYST"))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status", is(404)))
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
 }

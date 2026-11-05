@@ -379,6 +379,54 @@ public class AnalyticsRepository {
         });
     }
 
+    public long countRecords(
+            UUID datasetId,
+            LocalDate from,
+            LocalDate toExclusive,
+            List<String> categories,
+            List<String> regions,
+            String product
+    ) {
+        SalesWhereBuilder.WhereClause where = SalesWhereBuilder.build(
+                datasetId, from, toExclusive, categories, regions, product
+        );
+        String sql = "SELECT COUNT(*) FROM sales_records " + where.sql();
+        Long count = jdbcTemplate.queryForObject(sql, where.params(), Long.class);
+        return count != null ? count : 0L;
+    }
+
+    public void streamRecords(
+            UUID datasetId,
+            LocalDate from,
+            LocalDate toExclusive,
+            List<String> categories,
+            List<String> regions,
+            String product,
+            org.springframework.jdbc.core.RowCallbackHandler rch
+    ) {
+        SalesWhereBuilder.WhereClause where = SalesWhereBuilder.build(
+                datasetId, from, toExclusive, categories, regions, product
+        );
+        String sql = """
+                SELECT
+                    order_id,
+                    order_date,
+                    product_name,
+                    category,
+                    region,
+                    quantity,
+                    unit_price,
+                    unit_cost,
+                    line_revenue,
+                    line_gross_profit
+                FROM sales_records
+                """ + where.sql() + """
+                ORDER BY order_date ASC, order_id ASC, id ASC
+                """;
+
+        jdbcTemplate.query(sql, where.params(), rch);
+    }
+
     private String resolveCategorySortColumn(String sort) {
         if (sort == null || sort.isBlank() || sort.equalsIgnoreCase("revenue")) {
             return "revenue";

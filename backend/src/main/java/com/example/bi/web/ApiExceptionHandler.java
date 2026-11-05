@@ -239,6 +239,18 @@ public class ApiExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(com.example.bi.exception.ExportTooLargeException.class)
+    public ProblemDetail handleExportTooLarge(com.example.bi.exception.ExportTooLargeException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setTitle("Export Too Large");
+        problem.setType(URI.create("https://example.com/errors/EXPORT_TOO_LARGE"));
+        problem.setProperty("code", "EXPORT_TOO_LARGE");
+        problem.setProperty("requestId", requestId);
+        problem.setProperty("count", ex.getCount());
+        return problem;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String requestId = resolveRequestId(request);
