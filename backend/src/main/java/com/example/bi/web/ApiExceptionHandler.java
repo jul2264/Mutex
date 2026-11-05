@@ -206,6 +206,28 @@ public class ApiExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ProblemDetail handleInvalidDateRange(InvalidDateRangeException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Invalid Date Range");
+        problem.setType(URI.create("https://example.com/errors/INVALID_DATE_RANGE"));
+        problem.setProperty("code", "INVALID_DATE_RANGE");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidFilterParameterException.class)
+    public ProblemDetail handleInvalidFilterParameter(InvalidFilterParameterException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Invalid Filter Parameter");
+        problem.setType(URI.create("https://example.com/errors/INVALID_FILTER_PARAMETER"));
+        problem.setProperty("code", "INVALID_FILTER_PARAMETER");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
     @ExceptionHandler(InvalidSortException.class)
     public ProblemDetail handleInvalidSort(InvalidSortException ex, HttpServletRequest request) {
         String requestId = resolveRequestId(request);

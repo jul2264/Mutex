@@ -199,4 +199,46 @@ class AuthorizationMatrixIT {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.code", is("FORBIDDEN")));
     }
+
+    @Test
+    @DisplayName("M6 matrix: Anonymous access to all analytics endpoints returns 401")
+    void m6_anonymousAnalytics_returns401() throws Exception {
+        String[] endpoints = {
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/summary",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/trends",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/categories",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/regions",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/top-products",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/filter-options"
+        };
+
+        for (String endpoint : endpoints) {
+            mockMvc.perform(get(endpoint).accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.status", is(401)))
+                    .andExpect(jsonPath("$.code", is("UNAUTHORIZED")));
+        }
+    }
+
+    @Test
+    @DisplayName("M6 matrix: User B accessing User A's analytics endpoints returns 404 DATASET_NOT_FOUND, never 403")
+    void m6_foreignDatasetAnalytics_returns404Not403() throws Exception {
+        String[] endpoints = {
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/summary",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/trends",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/categories",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/regions",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/top-products",
+                "/api/datasets/" + USER_A_DATASET_ID + "/analytics/filter-options"
+        };
+
+        for (String endpoint : endpoints) {
+            mockMvc.perform(get(endpoint)
+                            .with(user("user.b@example.com").roles("ANALYST"))
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.status", is(404)))
+                    .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+        }
+    }
 }
