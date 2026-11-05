@@ -37,7 +37,7 @@ export function useAuth() {
   });
 
   const registerMutation = useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       displayName,
       email,
       password,
@@ -45,7 +45,10 @@ export function useAuth() {
       displayName: string;
       email: string;
       password: string;
-    }) => registerUser(displayName, email, password),
+    }) => {
+      await registerUser(displayName, email, password);
+      return await loginUser(email, password);
+    },
     onSuccess: (newUser) => {
       queryClient.setQueryData(['auth', 'me'], newUser);
     },
