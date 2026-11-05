@@ -1,9 +1,7 @@
 package com.example.bi.web;
 
 import com.example.bi.dto.FieldErrorDto;
-import com.example.bi.exception.DatasetNotFoundException;
-import com.example.bi.exception.EmailAlreadyRegisteredException;
-import com.example.bi.exception.ValidationException;
+import com.example.bi.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -27,6 +25,105 @@ public class ApiExceptionHandler {
         problem.setTitle("Dataset Not Found");
         problem.setType(URI.create("https://example.com/errors/DATASET_NOT_FOUND"));
         problem.setProperty("code", "DATASET_NOT_FOUND");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(FileEmptyException.class)
+    public ProblemDetail handleFileEmpty(FileEmptyException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("File Empty");
+        problem.setType(URI.create("https://example.com/errors/FILE_EMPTY"));
+        problem.setProperty("code", "FILE_EMPTY");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(FileTooLargeException.class)
+    public ProblemDetail handleFileTooLarge(FileTooLargeException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setTitle("File Too Large");
+        problem.setType(URI.create("https://example.com/errors/FILE_TOO_LARGE"));
+        problem.setProperty("code", "FILE_TOO_LARGE");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(UnsupportedFileTypeException.class)
+    public ProblemDetail handleUnsupportedFileType(UnsupportedFileTypeException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
+        problem.setTitle("Unsupported File Type");
+        problem.setType(URI.create("https://example.com/errors/UNSUPPORTED_FILE_TYPE"));
+        problem.setProperty("code", "UNSUPPORTED_FILE_TYPE");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(FileContentMismatchException.class)
+    public ProblemDetail handleFileContentMismatch(FileContentMismatchException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
+        problem.setTitle("File Content Mismatch");
+        problem.setType(URI.create("https://example.com/errors/FILE_CONTENT_MISMATCH"));
+        problem.setProperty("code", "FILE_CONTENT_MISMATCH");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(EncodingUnsupportedException.class)
+    public ProblemDetail handleEncodingUnsupported(EncodingUnsupportedException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
+        problem.setTitle("Encoding Unsupported");
+        problem.setType(URI.create("https://example.com/errors/ENCODING_UNSUPPORTED"));
+        problem.setProperty("code", "ENCODING_UNSUPPORTED");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(DatasetNameTakenException.class)
+    public ProblemDetail handleDatasetNameTaken(DatasetNameTakenException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Dataset Name Taken");
+        problem.setType(URI.create("https://example.com/errors/DATASET_NAME_TAKEN"));
+        problem.setProperty("code", "DATASET_NAME_TAKEN");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(ImportInProgressException.class)
+    public ProblemDetail handleImportInProgress(ImportInProgressException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Import In Progress");
+        problem.setType(URI.create("https://example.com/errors/IMPORT_IN_PROGRESS"));
+        problem.setProperty("code", "IMPORT_IN_PROGRESS");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(UploadRateLimitException.class)
+    public ProblemDetail handleUploadRateLimit(UploadRateLimitException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+        problem.setTitle("Upload Rate Limit Exceeded");
+        problem.setType(URI.create("https://example.com/errors/RATE_LIMIT_EXCEEDED"));
+        problem.setProperty("code", "RATE_LIMIT_EXCEEDED");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(ServerBusyException.class)
+    public ProblemDetail handleServerBusy(ServerBusyException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        problem.setTitle("Server Busy");
+        problem.setType(URI.create("https://example.com/errors/SERVER_BUSY"));
+        problem.setProperty("code", "SERVER_BUSY");
         problem.setProperty("requestId", requestId);
         return problem;
     }

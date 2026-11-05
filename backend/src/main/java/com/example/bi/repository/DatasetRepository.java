@@ -10,5 +10,6 @@ import java.util.UUID;
 @Repository
 public interface DatasetRepository extends JpaRepository<Dataset, UUID> {
     Optional<Dataset> findByIdAndOwnerId(UUID id, UUID ownerId);
+    boolean existsByOwnerIdAndNameIgnoreCase(UUID ownerId, String name);
 }
 
