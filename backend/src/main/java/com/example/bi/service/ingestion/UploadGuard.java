@@ -60,10 +60,9 @@ public class UploadGuard {
         if (lowerFilename.endsWith(".csv")) {
             format = FileFormat.CSV;
         } else if (lowerFilename.endsWith(".xlsx")) {
-            // XLSX support is scheduled for M4b
-            throw new UnsupportedFileTypeException("XLSX support is coming in M4b. Please upload a CSV file.");
+            format = FileFormat.XLSX;
         } else {
-            throw new UnsupportedFileTypeException("Unsupported file type. Only CSV (and XLSX) are permitted.");
+            throw new UnsupportedFileTypeException("Unsupported file type. Only CSV and XLSX are permitted.");
         }
 
         // 3. Prepare private temp directory
@@ -120,7 +119,7 @@ public class UploadGuard {
             throw new FileEmptyException("Uploaded file is empty");
         }
 
-        // 4. Content sniffing for CSV
+        // 4. Content sniffing
         if (format == FileFormat.CSV) {
             // Check for NUL bytes in the first 8 KB
             for (byte b : firstChunk) {
@@ -143,6 +142,48 @@ public class UploadGuard {
                     tempFile.delete();
                 }
                 throw new EncodingUnsupportedException("File encoding is not valid UTF-8");
+            }
+        } else if (format == FileFormat.XLSX) {
+            // Check ZIP magic: 0x50, 0x4B, 0x03, 0x04
+            if (firstChunk.length < 4 || firstChunk[0] != 0x50 || firstChunk[1] != 0x4B || firstChunk[2] != 0x03 || firstChunk[3] != 0x04) {
+                if (tempFile.exists()) {
+                    tempFile.delete();
+                }
+                throw new FileContentMismatchException("File content does not match XLSX format (ZIP signature missing)");
+            }
+
+            boolean hasContentTypes = false;
+            boolean hasWorkbook = false;
+
+            try (java.util.zip.ZipInputStream zis = new java.util.zip.ZipInputStream(new FileInputStream(tempFile))) {
+                java.util.zip.ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null) {
+                    String name = entry.getName();
+                    if (name.equalsIgnoreCase("[Content_Types].xml")) {
+                        hasContentTypes = true;
+                    } else if (name.equalsIgnoreCase("xl/workbook.xml")) {
+                        hasWorkbook = true;
+                    } else if (name.toLowerCase(Locale.ROOT).contains("vbaproject.bin")) {
+                        if (tempFile.exists()) {
+                            tempFile.delete();
+                        }
+                        throw new FileContentMismatchException("Macro-enabled workbooks (VBA) are not permitted");
+                    }
+                }
+            } catch (FileContentMismatchException e) {
+                throw e;
+            } catch (Exception e) {
+                if (tempFile.exists()) {
+                    tempFile.delete();
+                }
+                throw new FileContentMismatchException("Corrupted or invalid XLSX ZIP archive");
+            }
+
+            if (!hasContentTypes || !hasWorkbook) {
+                if (tempFile.exists()) {
+                    tempFile.delete();
+                }
+                throw new FileContentMismatchException("File content is missing required Excel workbook structures");
             }
         }
 

@@ -95,7 +95,7 @@ public class DatasetUploadService {
         }
 
         try {
-            importWorker.processImportJob(job.getId(), guardResult.tempFile(), job.getDateFormat());
+            importWorker.processImportJob(job.getId(), guardResult.tempFile(), job.getDateFormat(), job.getFileFormat());
         } catch (TaskRejectedException tre) {
             // Executor queue is full
             if (guardResult.tempFile().exists()) {

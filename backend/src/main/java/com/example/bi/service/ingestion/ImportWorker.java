@@ -1,6 +1,7 @@
 package com.example.bi.service.ingestion;
 
 import com.example.bi.config.ImportProperties;
+import com.example.bi.domain.FileFormat;
 import com.example.bi.domain.ImportJob;
 import com.example.bi.domain.ImportJobStatus;
 import com.example.bi.domain.IssueSeverity;
@@ -46,8 +47,8 @@ public class ImportWorker {
     }
 
     @Async("importJobExecutor")
-    public CompletableFuture<Void> processImportJob(UUID importJobId, File tempFile, String dateFormatPattern) {
-        log.info("Starting ingestion processing for importJobId={}", importJobId);
+    public CompletableFuture<Void> processImportJob(UUID importJobId, File tempFile, String dateFormatPattern, FileFormat format) {
+        log.info("Starting ingestion processing for importJobId={}, format={}", importJobId, format);
         long startTime = System.currentTimeMillis();
         long timeoutMillis = importProperties.getTimeoutSeconds() * 1000L;
 
@@ -63,7 +64,7 @@ public class ImportWorker {
             List<ParsedRow> rowBatch = new ArrayList<>(importProperties.getBatchSize());
             List<RowIssue> issueBatch = new ArrayList<>(importProperties.getBatchSize());
 
-            try (CsvRowReader reader = new CsvRowReader(tempFile, importProperties.getMaxRows(), importProperties.getMaxColumns())) {
+            try (RowReader reader = createReader(tempFile, format)) {
                 boolean hasExtraColumns = !reader.getExtraColumns().isEmpty();
 
                 while (reader.hasNext()) {
@@ -132,6 +133,13 @@ public class ImportWorker {
         }
 
         return CompletableFuture.completedFuture(null);
+    }
+
+    private RowReader createReader(File tempFile, FileFormat format) throws java.io.IOException {
+        if (format == FileFormat.XLSX) {
+            return new XlsxRowReader(tempFile, importProperties.getMaxRows(), importProperties.getMaxColumns());
+        }
+        return new CsvRowReader(tempFile, importProperties.getMaxRows(), importProperties.getMaxColumns());
     }
 
     private void flushBatch(UUID importJobId, List<ParsedRow> rowBatch, List<RowIssue> issueBatch, int totalParsedRows) {

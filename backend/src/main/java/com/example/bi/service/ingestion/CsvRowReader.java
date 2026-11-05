@@ -9,7 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class CsvRowReader implements Closeable {
+public class CsvRowReader implements RowReader {
 
     private static final Set<String> REQUIRED_COLUMNS = Set.of(
             "order_id", "order_date", "product_name", "category", "region", "quantity", "unit_price", "unit_cost"
