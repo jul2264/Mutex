@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { PreviewPage } from './pages/PreviewPage';
+import { DatasetListPage } from './pages/DatasetListPage';
 import { RequireAuth } from './components/auth/RequireAuth';
 
 const queryClient = new QueryClient({
@@ -25,7 +27,15 @@ export default function App() {
             path="/"
             element={
               <RequireAuth>
-                <AnalyticsPage />
+                <DatasetListPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/datasets/:datasetId/preview"
+            element={
+              <RequireAuth>
+                <PreviewPage />
               </RequireAuth>
             }
           />

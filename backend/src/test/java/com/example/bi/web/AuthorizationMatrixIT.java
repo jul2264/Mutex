@@ -24,7 +24,9 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -99,5 +101,102 @@ class AuthorizationMatrixIT {
                         .with(user("user.b@example.com").roles("ANALYST"))
                         .with(csrf()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("M5 matrix: Anonymous access to dataset list returns 401")
+    void m5_anonymousList_returns401() throws Exception {
+        mockMvc.perform(get("/api/datasets"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code", is("UNAUTHORIZED")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: User B gets 404 accessing User A's dataset details")
+    void m5_foreignDatasetDetails_returns404() throws Exception {
+        mockMvc.perform(get("/api/datasets/{id}", USER_A_DATASET_ID)
+                        .with(user("user.b@example.com").roles("ANALYST")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: User B gets 404 accessing User A's dataset preview")
+    void m5_foreignDatasetPreview_returns404() throws Exception {
+        mockMvc.perform(get("/api/datasets/{id}/preview", USER_A_DATASET_ID)
+                        .with(user("user.b@example.com").roles("ANALYST")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: User B gets 404 attempting to rename User A's dataset")
+    void m5_foreignDatasetRename_returns404() throws Exception {
+        mockMvc.perform(patch("/api/datasets/{id}", USER_A_DATASET_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Hacked Name\"}")
+                        .with(user("user.b@example.com").roles("ANALYST"))
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: User B gets 404 attempting to delete User A's dataset")
+    void m5_foreignDatasetDelete_returns404() throws Exception {
+        mockMvc.perform(delete("/api/datasets/{id}", USER_A_DATASET_ID)
+                        .param("confirmName", "User A Dataset")
+                        .with(user("user.b@example.com").roles("ANALYST"))
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: User B gets 404 attempting to confirm import on User A's dataset")
+    void m5_foreignDatasetConfirm_returns404() throws Exception {
+        mockMvc.perform(post("/api/datasets/{id}/imports/confirm", USER_A_DATASET_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"importJobId\":\"00000000-0000-0000-0000-000000000001\",\"includeDuplicates\":false}")
+                        .with(user("user.b@example.com").roles("ANALYST"))
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: User B gets 404 attempting to cancel import on User A's dataset")
+    void m5_foreignDatasetCancel_returns404() throws Exception {
+        mockMvc.perform(post("/api/datasets/{id}/imports/{jobId}/cancel", USER_A_DATASET_ID, UUID.randomUUID())
+                        .with(user("user.b@example.com").roles("ANALYST"))
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: User B gets 404 attempting to read import history on User A's dataset")
+    void m5_foreignDatasetHistory_returns404() throws Exception {
+        mockMvc.perform(get("/api/datasets/{id}/imports", USER_A_DATASET_ID)
+                        .with(user("user.b@example.com").roles("ANALYST")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    @DisplayName("M5 matrix: Unsafe PATCH/DELETE/POST on dataset without CSRF returns 403 Forbidden")
+    void m5_missingCsrf_returns403() throws Exception {
+        mockMvc.perform(patch("/api/datasets/{id}", USER_A_DATASET_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"New Name\"}")
+                        .with(user("user.b@example.com").roles("ANALYST")))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code", is("FORBIDDEN")));
+
+        mockMvc.perform(delete("/api/datasets/{id}", USER_A_DATASET_ID)
+                        .param("confirmName", "Some Name")
+                        .with(user("user.b@example.com").roles("ANALYST")))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code", is("FORBIDDEN")));
     }
 }

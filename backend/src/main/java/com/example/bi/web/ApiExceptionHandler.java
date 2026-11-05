@@ -151,6 +151,72 @@ public class ApiExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(ImportNotConfirmableException.class)
+    public ProblemDetail handleImportNotConfirmable(ImportNotConfirmableException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Import Not Confirmable");
+        problem.setType(URI.create("https://example.com/errors/IMPORT_NOT_CONFIRMABLE"));
+        problem.setProperty("code", "IMPORT_NOT_CONFIRMABLE");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(ImportNotCancelableException.class)
+    public ProblemDetail handleImportNotCancelable(ImportNotCancelableException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Import Not Cancelable");
+        problem.setType(URI.create("https://example.com/errors/IMPORT_NOT_CANCELABLE"));
+        problem.setProperty("code", "IMPORT_NOT_CANCELABLE");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(StrictPolicyBlockedException.class)
+    public ProblemDetail handleStrictPolicyBlocked(StrictPolicyBlockedException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setTitle("Strict Policy Blocked");
+        problem.setType(URI.create("https://example.com/errors/STRICT_POLICY_BLOCKED"));
+        problem.setProperty("code", "STRICT_POLICY_BLOCKED");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(NothingToImportException.class)
+    public ProblemDetail handleNothingToImport(NothingToImportException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setTitle("Nothing To Import");
+        problem.setType(URI.create("https://example.com/errors/NOTHING_TO_IMPORT"));
+        problem.setProperty("code", "NOTHING_TO_IMPORT");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(DatasetNameMismatchException.class)
+    public ProblemDetail handleDatasetNameMismatch(DatasetNameMismatchException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Dataset Name Mismatch");
+        problem.setType(URI.create("https://example.com/errors/DATASET_NAME_MISMATCH"));
+        problem.setProperty("code", "DATASET_NAME_MISMATCH");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidSortException.class)
+    public ProblemDetail handleInvalidSort(InvalidSortException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Invalid Sort Parameter");
+        problem.setType(URI.create("https://example.com/errors/INVALID_SORT_PARAMETER"));
+        problem.setProperty("code", "INVALID_SORT_PARAMETER");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String requestId = resolveRequestId(request);
@@ -165,6 +231,20 @@ public class ApiExceptionHandler {
         problem.setProperty("code", "VALIDATION_FAILED");
         problem.setProperty("requestId", requestId);
         problem.setProperty("errors", errors);
+        return problem;
+    }
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ApiExceptionHandler.class);
+
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleGenericException(Exception ex, HttpServletRequest request) {
+        log.error("Unhandled exception: ", ex);
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        problem.setTitle("Internal Server Error");
+        problem.setType(URI.create("https://example.com/errors/INTERNAL_ERROR"));
+        problem.setProperty("code", "INTERNAL_ERROR");
+        problem.setProperty("requestId", requestId);
         return problem;
     }
 

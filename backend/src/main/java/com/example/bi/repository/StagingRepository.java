@@ -185,6 +185,119 @@ public class StagingRepository {
         ), importJobId);
     }
 
+    public record StagingRowData(
+            long id,
+            int sourceRowNumber,
+            RowStatus rowStatus,
+            Map<String, Object> rawValues,
+            String orderId,
+            java.time.LocalDate orderDate,
+            String productName,
+            String category,
+            String region,
+            Integer quantity,
+            java.math.BigDecimal unitPrice,
+            java.math.BigDecimal unitCost
+    ) {}
+
+    public List<StagingRowData> findStagingRows(UUID importJobId, RowStatus statusFilter, int offset, int limit) {
+        StringBuilder sql = new StringBuilder("""
+                SELECT id, source_row_number, row_status, raw_values,
+                       order_id, order_date, product_name, category, region,
+                       quantity, unit_price, unit_cost
+                FROM import_staging_rows
+                WHERE import_job_id = ?
+                """);
+
+        List<Object> params = new ArrayList<>();
+        params.add(importJobId);
+
+        if (statusFilter != null) {
+            sql.append(" AND row_status = ?");
+            params.add(statusFilter.name());
+        }
+
+        sql.append(" ORDER BY source_row_number ASC, id ASC LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> {
+            Map<String, Object> rawMap = null;
+            String rawJson = rs.getString("raw_values");
+            if (rawJson != null && !rawJson.isBlank()) {
+                try {
+                    rawMap = objectMapper.readValue(rawJson, Map.class);
+                } catch (Exception ignored) {}
+            }
+
+            java.sql.Date d = rs.getDate("order_date");
+            java.time.LocalDate localDate = (d != null) ? d.toLocalDate() : null;
+
+            int qty = rs.getInt("quantity");
+            Integer quantity = rs.wasNull() ? null : qty;
+
+            return new StagingRowData(
+                    rs.getLong("id"),
+                    rs.getInt("source_row_number"),
+                    RowStatus.valueOf(rs.getString("row_status")),
+                    rawMap,
+                    rs.getString("order_id"),
+                    localDate,
+                    rs.getString("product_name"),
+                    rs.getString("category"),
+                    rs.getString("region"),
+                    quantity,
+                    rs.getBigDecimal("unit_price"),
+                    rs.getBigDecimal("unit_cost")
+            );
+        }, params.toArray());
+    }
+
+    public long countStagingRows(UUID importJobId, RowStatus statusFilter) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM import_staging_rows WHERE import_job_id = ?");
+        List<Object> params = new ArrayList<>();
+        params.add(importJobId);
+
+        if (statusFilter != null) {
+            sql.append(" AND row_status = ?");
+            params.add(statusFilter.name());
+        }
+
+        Long count = jdbcTemplate.queryForObject(sql.toString(), Long.class, params.toArray());
+        return count != null ? count : 0L;
+    }
+
+    public Map<Integer, List<RowIssue>> findIssuesForRows(UUID importJobId, List<Integer> rowNumbers) {
+        if (rowNumbers == null || rowNumbers.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        String inSql = String.join(",", Collections.nCopies(rowNumbers.size(), "?"));
+        String sql = "SELECT source_row_number, column_name, severity, code, message, raw_value " +
+                     "FROM import_row_issues WHERE import_job_id = ? AND source_row_number IN (" + inSql + ") " +
+                     "ORDER BY source_row_number ASC, id ASC";
+
+        List<Object> params = new ArrayList<>();
+        params.add(importJobId);
+        params.addAll(rowNumbers);
+
+        Map<Integer, List<RowIssue>> result = new HashMap<>();
+        jdbcTemplate.query(sql, rs -> {
+            int rowNum = rs.getInt("source_row_number");
+            RowIssue issue = new RowIssue(
+                    rowNum,
+                    rs.getString("column_name"),
+                    IssueSeverity.valueOf(rs.getString("severity")),
+                    rs.getString("code"),
+                    rs.getString("message"),
+                    rs.getString("raw_value")
+            );
+            result.computeIfAbsent(rowNum, k -> new ArrayList<>()).add(issue);
+        }, params.toArray());
+
+        return result;
+    }
+
     @Transactional
     public void deleteStagingData(UUID importJobId) {
         jdbcTemplate.update("DELETE FROM import_row_issues WHERE import_job_id = ?", importJobId);

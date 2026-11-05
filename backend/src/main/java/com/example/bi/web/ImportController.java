@@ -1,7 +1,14 @@
 package com.example.bi.web;
 
+import com.example.bi.dto.ConfirmImportRequest;
+import com.example.bi.dto.ConfirmImportResponse;
 import com.example.bi.dto.ImportJobStatusResponse;
+import com.example.bi.dto.ImportJobSummaryDto;
+import com.example.bi.service.dataset.DatasetService;
+import com.example.bi.service.ingestion.ImportCancelService;
+import com.example.bi.service.ingestion.ImportCommitService;
 import com.example.bi.service.ingestion.ImportJobService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +19,7 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,9 +27,26 @@ import java.util.UUID;
 public class ImportController {
 
     private final ImportJobService importJobService;
+    private final ImportCommitService importCommitService;
+    private final ImportCancelService importCancelService;
+    private final DatasetService datasetService;
 
-    public ImportController(ImportJobService importJobService) {
+    public ImportController(
+            ImportJobService importJobService,
+            ImportCommitService importCommitService,
+            ImportCancelService importCancelService,
+            DatasetService datasetService
+    ) {
         this.importJobService = importJobService;
+        this.importCommitService = importCommitService;
+        this.importCancelService = importCancelService;
+        this.datasetService = datasetService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ImportJobSummaryDto>> getImportHistory(@PathVariable("datasetId") UUID datasetId) {
+        List<ImportJobSummaryDto> history = datasetService.getImportHistory(datasetId);
+        return ResponseEntity.ok(history);
     }
 
     @GetMapping("/{jobId}")
@@ -31,6 +56,24 @@ public class ImportController {
     ) {
         ImportJobStatusResponse response = importJobService.getJobStatus(datasetId, jobId);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<ConfirmImportResponse> confirmImport(
+            @PathVariable("datasetId") UUID datasetId,
+            @Valid @RequestBody ConfirmImportRequest request
+    ) {
+        ConfirmImportResponse response = importCommitService.confirmImport(datasetId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{jobId}/cancel")
+    public ResponseEntity<Void> cancelImport(
+            @PathVariable("datasetId") UUID datasetId,
+            @PathVariable("jobId") UUID jobId
+    ) {
+        importCancelService.cancelImport(datasetId, jobId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(value = "/{jobId}/errors.csv", produces = "text/csv")

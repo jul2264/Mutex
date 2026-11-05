@@ -1,0 +1,105 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getPreview, confirmImport, cancelImport, getImportHistory } from './imports';
+
+describe('imports API client', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('getPreview calls GET /api/datasets/:id/preview with params', async () => {
+    const mockPreview = {
+      source: 'STAGED',
+      counts: { total: 10, valid: 8, invalid: 2, duplicateCandidate: 0, warnings: 1 },
+      page: 0,
+      size: 50,
+      totalElements: 10,
+      totalPages: 1,
+      content: [],
+    };
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockPreview,
+    } as Response);
+
+    const result = await getPreview('ds-100', { source: 'STAGED', status: 'VALID', page: 0, size: 50 });
+    expect(result).toEqual(mockPreview);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/preview?source=STAGED&status=VALID&page=0&size=50',
+      expect.objectContaining({ credentials: 'same-origin' })
+    );
+  });
+
+  it('confirmImport sends POST to /api/datasets/:id/imports/confirm', async () => {
+    const mockResult = {
+      datasetId: 'ds-100',
+      importJobId: 'job-1',
+      importedRows: 8,
+      dataVersion: 1,
+      status: 'COMPLETED',
+    };
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockResult,
+    } as Response);
+
+    const result = await confirmImport('ds-100', { importJobId: 'job-1', includeDuplicates: false });
+    expect(result).toEqual(mockResult);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/imports/confirm',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ importJobId: 'job-1', includeDuplicates: false }),
+      })
+    );
+  });
+
+  it('cancelImport sends POST to /api/datasets/:id/imports/:jobId/cancel', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 204,
+      json: async () => null,
+    } as Response);
+
+    await cancelImport('ds-100', 'job-1');
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/imports/job-1/cancel',
+      expect.objectContaining({ method: 'POST' })
+    );
+  });
+
+  it('getImportHistory calls GET /api/datasets/:id/imports', async () => {
+    const mockHistory = [
+      {
+        id: 'job-1',
+        datasetId: 'ds-100',
+        status: 'COMPLETED',
+        originalFilename: 'sales.csv',
+        policy: 'IMPORT_VALID_ONLY',
+        totalRows: 10,
+        validRows: 10,
+        invalidRows: 0,
+        duplicateRows: 0,
+        importedRows: 10,
+        createdAt: '2026-01-01T00:00:00Z',
+        completedAt: '2026-01-01T00:01:00Z',
+      },
+    ];
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockHistory,
+    } as Response);
+
+    const result = await getImportHistory('ds-100');
+    expect(result).toEqual(mockHistory);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/imports',
+      expect.objectContaining({ credentials: 'same-origin' })
+    );
+  });
+});
