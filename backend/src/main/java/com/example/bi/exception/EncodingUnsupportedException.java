@@ -5,3 +5,4 @@ public class EncodingUnsupportedException extends RuntimeException {
         super(message);
     }
 }
+

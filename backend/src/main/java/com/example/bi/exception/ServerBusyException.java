@@ -5,3 +5,4 @@ public class ServerBusyException extends RuntimeException {
         super(message);
     }
 }
+

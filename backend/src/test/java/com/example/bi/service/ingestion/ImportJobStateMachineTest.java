@@ -47,3 +47,4 @@ class ImportJobStateMachineTest {
         assertFalse(ImportJobStateMachine.canTransition(ImportJobStatus.PARSING, null));
     }
 }
+

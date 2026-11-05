@@ -5,3 +5,4 @@ public enum RowStatus {
     INVALID,
     DUPLICATE_CANDIDATE
 }
+

@@ -5,3 +5,4 @@ public class DatasetNameTakenException extends RuntimeException {
         super(message);
     }
 }
+

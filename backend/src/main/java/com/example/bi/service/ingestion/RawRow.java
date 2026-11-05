@@ -7,3 +7,4 @@ public record RawRow(
         Map<String, String> cells,
         boolean isBlank
 ) {}
+

@@ -69,3 +69,4 @@ class StartupRecoveryServiceTest {
         assertNotNull(recovered.getCompletedAt());
     }
 }
+

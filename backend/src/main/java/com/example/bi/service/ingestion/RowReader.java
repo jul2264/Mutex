@@ -9,3 +9,4 @@ public interface RowReader extends Closeable {
     List<String> getHeaderNames();
     List<String> getExtraColumns();
 }
+

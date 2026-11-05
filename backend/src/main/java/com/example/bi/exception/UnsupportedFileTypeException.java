@@ -5,3 +5,4 @@ public class UnsupportedFileTypeException extends RuntimeException {
         super(message);
     }
 }
+

@@ -26,3 +26,4 @@ public record ParsedRow(
         return status == RowStatus.VALID;
     }
 }
+

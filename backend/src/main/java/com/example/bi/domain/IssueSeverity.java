@@ -4,3 +4,4 @@ public enum IssueSeverity {
     ERROR,
     WARNING
 }
+

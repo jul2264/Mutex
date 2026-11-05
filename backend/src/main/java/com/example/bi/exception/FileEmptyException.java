@@ -5,3 +5,4 @@ public class FileEmptyException extends RuntimeException {
         super(message);
     }
 }
+
