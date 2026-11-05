@@ -51,3 +51,4 @@ class FormulaSafeTest {
         assertThat(FormulaSafe.sanitize("  =cmd")).isEqualTo("'  =cmd");
     }
 }
+
