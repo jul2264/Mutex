@@ -36,3 +36,4 @@ export async function deleteDataset(id: string, confirmName: string): Promise<vo
     method: 'DELETE',
   });
 }
+
