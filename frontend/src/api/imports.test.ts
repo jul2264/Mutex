@@ -102,5 +102,41 @@ describe('imports API client', () => {
       expect.objectContaining({ credentials: 'same-origin' })
     );
   });
+
+  it('getJobStatus calls GET /api/datasets/:id/imports/:jobId', async () => {
+    const mockStatus = {
+      id: 'job-1',
+      datasetId: 'ds-100',
+      status: 'VALIDATED',
+      policy: 'IMPORT_VALID_ONLY',
+      fileName: 'sales.csv',
+      rowsProcessed: 100,
+      totalRows: 100,
+      validRows: 98,
+      invalidRows: 2,
+      duplicateRows: 0,
+      warningCount: 0,
+      blankRowsSkipped: 0,
+      issuesTruncated: false,
+      canConfirm: true,
+      confirmBlockedReason: null,
+      fileError: null,
+      expiresAt: '2026-01-01T01:00:00Z',
+    };
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockStatus,
+    } as Response);
+
+    const { getJobStatus } = await import('./imports');
+    const result = await getJobStatus('ds-100', 'job-1');
+    expect(result).toEqual(mockStatus);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/imports/job-1',
+      expect.objectContaining({ credentials: 'same-origin' })
+    );
+  });
 });
 

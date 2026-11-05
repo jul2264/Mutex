@@ -154,6 +154,118 @@ export interface ConfirmImportResponse {
   status: string;
 }
 
+export interface TrendPoint {
+  month: string;
+  revenue: string;
+  grossProfit: string;
+  unitsSold: number;
+  grossMarginPct: Metric;
+  revenueGrowthPct: Metric;
+}
+
+export interface TrendsResponse {
+  datasetId: string;
+  currency: string;
+  dataVersion: number;
+  points: TrendPoint[];
+}
+
+export interface BreakdownRow {
+  name: string;
+  revenue: string;
+  grossProfit: string;
+  unitsSold: number;
+  revenueSharePct: string;
+  grossMarginPct: Metric;
+  marginDeltaPoints: string | null;
+  revenueGrowthPct: Metric | null;
+}
+
+export interface CategoriesResponse {
+  datasetId: string;
+  currency: string;
+  dataVersion: number;
+  categories: BreakdownRow[];
+}
+
+export interface RegionsResponse {
+  datasetId: string;
+  currency: string;
+  dataVersion: number;
+  regions: BreakdownRow[];
+}
+
+export interface TopProductRow {
+  product: string;
+  revenue: string;
+  grossProfit: string;
+  unitsSold: number;
+  revenueRank: number;
+  profitRank: number;
+}
+
+export interface TopProductsResponse {
+  datasetId: string;
+  currency: string;
+  dataVersion: number;
+  products: TopProductRow[];
+}
+
+export interface FilterOptionsResponse {
+  datasetId: string;
+  categories: string[];
+  regions: string[];
+  minOrderDate: string | null;
+  maxOrderDate: string | null;
+  totalProducts: number;
+  categoriesTruncated: boolean;
+  regionsTruncated: boolean;
+}
+
+export interface AnalyticsFilterParams {
+  from?: string;
+  to?: string;
+  category?: string[];
+  region?: string[];
+  product?: string;
+  compare?: 'NONE' | 'PREVIOUS_PERIOD';
+  sort?: string;
+  direction?: 'asc' | 'desc';
+  limit?: number;
+  rankBy?: 'REVENUE' | 'PROFIT';
+}
+
+export interface UploadResponse {
+  datasetId: string;
+  importJobId: string;
+  statusUrl: string;
+}
+
+export interface FileErrorDto {
+  code: string;
+  message: string;
+}
+
+export interface ImportJobStatusResponse {
+  id: string;
+  datasetId: string;
+  status: 'PARSING' | 'VALIDATED' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'EXPIRED';
+  policy: string;
+  fileName: string;
+  rowsProcessed: number;
+  totalRows: number;
+  validRows: number;
+  invalidRows: number;
+  duplicateRows: number;
+  warningCount: number;
+  blankRowsSkipped: number;
+  issuesTruncated: boolean;
+  canConfirm: boolean;
+  confirmBlockedReason: string | null;
+  fileError: FileErrorDto | null;
+  expiresAt: string | null;
+}
+
 export interface RenameDatasetRequest {
   name: string;
 }

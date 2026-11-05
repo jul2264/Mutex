@@ -222,3 +222,4 @@ Execution Time: 36.637 ms
 1. The existing compound primary key and dataset index on `sales_records(dataset_id, order_date)` allows PostgreSQL to quickly isolate rows for a given dataset and range.
 2. Parallel sequential scans with 2 workers are efficiently utilized by PostgreSQL 17 for aggregates across 100,000 rows.
 3. Every analytics query executes in under 205 ms (p95 latency is well below the 2,000 ms target), leaving substantial headroom for v1 requirements.
+

@@ -26,7 +26,7 @@ function getCookie(name: string): string | null {
 
 let csrfBootstrapPromise: Promise<string | null> | null = null;
 
-async function getOrFetchCsrfToken(): Promise<string | null> {
+export async function getOrFetchCsrfToken(): Promise<string | null> {
   let token = getCookie('XSRF-TOKEN');
   if (token) return token;
 

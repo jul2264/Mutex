@@ -5,6 +5,9 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { PreviewPage } from './pages/PreviewPage';
 import { DatasetListPage } from './pages/DatasetListPage';
+import { UploadPage } from './pages/UploadPage';
+import { DatasetDetailPage } from './pages/DatasetDetailPage';
+import { ReportsPage } from './pages/ReportsPage';
 import { RequireAuth } from './components/auth/RequireAuth';
 
 const queryClient = new QueryClient({
@@ -32,6 +35,30 @@ export default function App() {
             }
           />
           <Route
+            path="/datasets"
+            element={
+              <RequireAuth>
+                <DatasetListPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/datasets/upload"
+            element={
+              <RequireAuth>
+                <UploadPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/datasets/:datasetId"
+            element={
+              <RequireAuth>
+                <DatasetDetailPage />
+              </RequireAuth>
+            }
+          />
+          <Route
             path="/datasets/:datasetId/preview"
             element={
               <RequireAuth>
@@ -44,6 +71,14 @@ export default function App() {
             element={
               <RequireAuth>
                 <AnalyticsPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/datasets/:datasetId/reports"
+            element={
+              <RequireAuth>
+                <ReportsPage />
               </RequireAuth>
             }
           />

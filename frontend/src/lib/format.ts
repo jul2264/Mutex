@@ -31,3 +31,17 @@ export function formatCount(count: number | null | undefined): string {
   return new Intl.NumberFormat('en-IN').format(count);
 }
 
+export function formatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return '—';
+  try {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      return `${day}/${month}/${year}`;
+    }
+    return dateStr;
+  } catch {
+    return dateStr;
+  }
+}
+

@@ -81,3 +81,4 @@ COMMIT;
 
 ANALYZE sales_records;
 ANALYZE datasets;
+

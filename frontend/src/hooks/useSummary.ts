@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchSummary } from '../api/analytics';
+import type { AnalyticsFilterParams } from '../api/types';
 
-export function useSummary(datasetId: string, from?: string, to?: string) {
+export function useSummary(datasetId: string, filter?: AnalyticsFilterParams) {
   return useQuery({
-    queryKey: ['analytics', 'summary', datasetId, from, to],
-    queryFn: ({ signal }) => fetchSummary(datasetId, from, to, signal),
+    queryKey: ['analytics', 'summary', datasetId, filter],
+    queryFn: ({ signal }) => fetchSummary(datasetId, filter, signal),
     enabled: Boolean(datasetId),
   });
 }
-
