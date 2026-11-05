@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-@Profile({"dev", "test"})
+@Profile("test-dev-stub")
 public class DevStubCurrentUserProvider implements CurrentUserProvider {
 
     public static final UUID DEV_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");

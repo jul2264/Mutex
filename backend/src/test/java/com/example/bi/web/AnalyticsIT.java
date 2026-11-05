@@ -8,6 +8,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +37,7 @@ class AnalyticsIT {
     @DisplayName("GET /api/datasets/{id}/analytics/summary returns verified F1 oracle totals")
     void getSummary_returnsF1Totals() throws Exception {
         mockMvc.perform(get("/api/datasets/{datasetId}/analytics/summary", SEEDED_DATASET_ID)
+                        .with(user("dev@example.com").roles("ANALYST"))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.datasetId", is(SEEDED_DATASET_ID.toString())))
@@ -52,6 +55,7 @@ class AnalyticsIT {
     @DisplayName("GET /api/datasets/{id}/analytics/summary for unknown dataset returns 404 problem detail")
     void getSummary_unknownDataset_returns404ProblemDetail() throws Exception {
         mockMvc.perform(get("/api/datasets/{datasetId}/analytics/summary", UNKNOWN_DATASET_ID)
+                        .with(user("dev@example.com").roles("ANALYST"))
                         .header("X-Request-Id", "req-test-1234")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())

@@ -1,5 +1,7 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useSummary } from '../hooks/useSummary';
+import { useAuth } from '../hooks/useAuth';
 import { KpiCard } from '../components/kpi/KpiCard';
 import { formatCount, formatMoney, formatPercent } from '../lib/format';
 
@@ -8,8 +10,12 @@ interface AnalyticsPageProps {
 }
 
 export const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
-  datasetId = '00000000-0000-0000-0000-000000000002', // Seeded F1 dataset
+  datasetId: propDatasetId,
 }) => {
+  const { datasetId: paramDatasetId } = useParams<{ datasetId?: string }>();
+  const datasetId = propDatasetId || paramDatasetId || '00000000-0000-0000-0000-000000000002'; // Seeded F1 dataset
+
+  const { user, logout, isLoggingOut } = useAuth();
   const { data, isLoading, isError, error, refetch } = useSummary(datasetId);
 
   return (
@@ -29,10 +35,25 @@ export const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-black/8 text-[#615d59]">
               Dataset: F1 Sample Sales
             </span>
+
+            {user && (
+              <div className="flex items-center gap-2 border-l border-black/10 pl-3">
+                <span className="text-xs text-[#37352f] font-medium hidden sm:inline">
+                  {user.displayName}
+                </span>
+                <button
+                  onClick={() => logout()}
+                  disabled={isLoggingOut}
+                  className="text-xs text-[#757575] hover:text-black hover:bg-black/5 px-2 py-1 rounded transition-colors"
+                >
+                  {isLoggingOut ? 'Logging out...' : 'Sign out'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>

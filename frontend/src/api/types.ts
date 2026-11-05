@@ -31,6 +31,19 @@ export interface SummaryResponse {
   previous: PreviousTotalsDto | null;
 }
 
+export interface UserDto {
+  id: string;
+  displayName: string;
+  email: string;
+  role: string;
+}
+
+export interface CsrfResponse {
+  token: string;
+  headerName: string;
+  parameterName: string;
+}
+
 export interface ApiProblemDetail {
   type?: string;
   title?: string;
@@ -41,4 +54,3 @@ export interface ApiProblemDetail {
   requestId?: string;
   errors?: Array<{ field: string; code: string; message: string }>;
 }
-

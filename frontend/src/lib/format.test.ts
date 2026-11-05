@@ -28,3 +28,4 @@ describe('format utilities', () => {
     expect(formatCount(null)).toBe('0');
   });
 });
+
