@@ -68,3 +68,4 @@ describe('filters lib', () => {
     expect(getDatePreset(lastMonth.from, lastMonth.to)).toBe('lastMonth');
   });
 });
+

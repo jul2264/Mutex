@@ -106,3 +106,4 @@ export function computePresetDates(preset: DatePreset): { from?: string; to?: st
 
   return {};
 }
+

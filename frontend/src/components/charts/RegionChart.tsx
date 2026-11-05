@@ -216,3 +216,4 @@ export const RegionChart: React.FC<RegionChartProps> = ({
     </div>
   );
 };
+
