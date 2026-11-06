@@ -1,0 +1,101 @@
+order_id,order_date,product_name,category,region,quantity,unit_price,unit_cost
+ORD-00001,2025-01-01,Sports Socks Pack,Fashion,South,2,349,147.3
+ORD-00002,2025-01-01,Gel Pen Pack,Office Supplies,West,1,199,95.63
+ORD-00003,2025-01-01,Shaker Bottle,Fitness,North,6,349,152.47
+ORD-00004,2025-01-01,Cotton T-Shirt,Fashion,South,5,509.15,279.07
+ORD-00005,2025-01-02,Shaker Bottle,Fitness,North,2,349,157.52
+ORD-00006,2025-01-02,Printer Paper Ream,Office Supplies,South,1,349,220.36
+ORD-00007,2025-01-03,Bluetooth Speaker,Electronics,North,2,2089.05,1436.67
+ORD-00008,2025-01-04,Mechanical Keyboard,Electronics,South,1,2499,1632.57
+ORD-00009,2025-01-05,Wireless Mouse,Electronics,South,1,699,443.56
+ORD-00010,2025-01-05,A4 Notebook,Office Supplies,West,8,149,68.46
+ORD-00011,2025-01-05,USB-C Hub,Electronics,West,4,1499,976.64
+ORD-00012,2025-01-05,Cotton T-Shirt,Fashion,South,2,599,285.48
+ORD-00013,2025-01-06,Webcam HD,Electronics,North,1,1614.15,1142.28
+ORD-00014,2025-01-06,A4 Notebook,Office Supplies,East,8,134.1,70.02
+ORD-00015,2025-01-06,Mechanical Keyboard,Electronics,North,2,2124.15,1640.59
+ORD-00016,2025-01-07,A4 Notebook,Office Supplies,South,3,134.1,68.7
+ORD-00017,2025-01-08,Lunch Box Set,Home & Kitchen,West,12,699,380.62
+ORD-00018,2025-01-08,Yoga Mat,Fitness,West,2,999,561.08
+ORD-00019,2025-01-09,Desk Organizer,Office Supplies,East,8,399,220.42
+ORD-00020,2025-01-09,Sports Socks Pack,Fashion,West,5,296.65,159.37
+ORD-00021,2025-01-10,USB-C Hub,Electronics,East,10,1499,947.4
+ORD-00022,2025-01-10,Cotton T-Shirt,Fashion,South,1,599,305.33
+ORD-00023,2025-01-10,Lunch Box Set,Home & Kitchen,Central,10,699,382.9
+ORD-00024,2025-01-10,Wireless Mouse,Electronics,East,2,594.15,417.76
+ORD-00025,2025-01-11,Coffee Mug,Home & Kitchen,South,6,299,129.19
+ORD-00026,2025-01-11,Sticky Notes Pack,Office Supplies,South,5,129,66.88
+ORD-00027,2025-01-12,Cotton T-Shirt,Fashion,North,3,539.1,280.8
+ORD-00028,2025-01-13,Lunch Box Set,Home & Kitchen,South,1,629.1,402.83
+ORD-00029,2025-01-13,Water Bottle 1L,Home & Kitchen,South,1,449,246.86
+ORD-00030,2025-01-13,Bluetooth Speaker,Electronics,Central,1,1979.1,1446.85
+ORD-00031,2025-01-13,Webcam HD,Electronics,South,2,1804.05,1238.35
+ORD-00032,2025-01-13,Power Bank 10000mAh,Electronics,West,6,1799,1090.31
+ORD-00033,2025-01-14,Mechanical Keyboard,Electronics,Central,3,2499,1628.56
+ORD-00034,2025-01-15,Coffee Mug,Home & Kitchen,West,1,284.05,127.47
+ORD-00035,2025-01-15,Wireless Mouse,Electronics,North,6,699,407.81
+ORD-00036,2025-01-15,Power Bank 10000mAh,Electronics,South,3,1709.05,1086.83
+ORD-00037,2025-01-16,Resistance Band Set,Fitness,North,8,799,411.33
+ORD-00038,2025-01-16,Canvas Backpack,Fashion,West,3,1399,748.52
+ORD-00039,2025-01-16,USB-C Hub,Electronics,Central,8,1499,931.16
+ORD-00040,2025-01-17,Bluetooth Speaker,Electronics,North,4,2089.05,1509.53
+ORD-00041,2025-01-17,Sports Socks Pack,Fashion,West,4,349,154.56
+ORD-00042,2025-01-18,Water Bottle 1L,Home & Kitchen,North,4,449,244.98
+ORD-00043,2025-01-19,Power Bank 10000mAh,Electronics,North,4,1799,1080.76
+ORD-00044,2025-01-20,Baseball Cap,Fashion,West,1,449,187.08
+ORD-00045,2025-01-20,Resistance Band Set,Fitness,West,1,799,454.6
+ORD-00046,2025-01-20,USB-C Hub,Electronics,West,5,1499,914.93
+ORD-00047,2025-01-20,Water Bottle 1L,Home & Kitchen,North,1,449,253.28
+ORD-00048,2025-01-20,Webcam HD,Electronics,West,5,1804.05,1193.73
+ORD-00049,2025-01-23,A4 Notebook,Office Supplies,South,2,134.1,70.33
+ORD-00050,2025-01-23,Cotton T-Shirt,Fashion,Central,2,599,291.82
+ORD-00051,2025-01-24,USB-C Hub,Electronics,North,3,1274.15,967.55
+ORD-00052,2025-01-24,Gel Pen Pack,Office Supplies,East,6,199,94.46
+ORD-00053,2025-01-25,Coffee Mug,Home & Kitchen,West,10,299,134.44
+ORD-00054,2025-01-27,Power Bank 10000mAh,Electronics,North,5,1529.15,1168.86
+ORD-00055,2025-01-27,Power Bank 10000mAh,Electronics,South,6,1799,1168.44
+ORD-00056,2025-01-27,A4 Notebook,Office Supplies,East,8,126.65,69.06
+ORD-00057,2025-01-27,Mechanical Keyboard,Electronics,North,1,2499,1501.24
+ORD-00058,2025-01-29,Bluetooth Speaker,Electronics,West,2,2199,1514.11
+ORD-00059,2025-01-29,Sticky Notes Pack,Office Supplies,North,6,129,69.03
+ORD-00060,2025-01-29,A4 Notebook,Office Supplies,East,1,141.55,69.26
+ORD-00061,2025-01-30,Mechanical Keyboard,Electronics,West,1,2124.15,1548.4
+ORD-00062,2025-01-30,Coffee Mug,Home & Kitchen,West,3,299,138.55
+ORD-00063,2025-01-30,Power Bank 10000mAh,Electronics,Central,5,1799,1185.85
+ORD-00064,2025-01-31,Wireless Mouse,Electronics,North,2,699,416.75
+ORD-00065,2025-01-31,USB-C Hub,Electronics,South,1,1499,951.39
+ORD-00066,2025-01-31,Webcam HD,Electronics,North,6,1709.1,1204.64
+ORD-00067,2025-02-01,Resistance Band Set,Fitness,North,5,799,457.02
+ORD-00068,2025-02-01,Sticky Notes Pack,Office Supplies,South,1,122.55,66.77
+ORD-00069,2025-02-02,Resistance Band Set,Fitness,Central,1,799,430.71
+ORD-00070,2025-02-02,Storage Container Set,Home & Kitchen,West,1,854.05,524.82
+ORD-00071,2025-02-02,Printer Paper Ream,Office Supplies,Central,1,331.55,221.59
+ORD-00072,2025-02-04,Power Bank 10000mAh,Electronics,South,8,1799,1176.05
+ORD-00073,2025-02-05,Storage Container Set,Home & Kitchen,South,4,899,544.15
+ORD-00074,2025-02-05,Storage Container Set,Home & Kitchen,Central,1,899,529.55
+ORD-00075,2025-02-06,Wireless Mouse,Electronics,North,2,699,425.3
+ORD-00076,2025-02-06,Printer Paper Ream,Office Supplies,West,1,296.65,204.23
+ORD-00077,2025-02-06,A4 Notebook,Office Supplies,South,3,149,69.87
+ORD-00078,2025-02-06,Wireless Mouse,Electronics,North,1,699,442.25
+ORD-00079,2025-02-07,Coffee Mug,Home & Kitchen,Central,2,299,138.9
+ORD-00080,2025-02-08,Canvas Backpack,Fashion,West,1,1399,774.26
+ORD-00081,2025-02-09,Cotton T-Shirt,Fashion,North,1,599,289.14
+ORD-00082,2025-02-10,Sticky Notes Pack,Office Supplies,Central,8,129,62.43
+ORD-00083,2025-02-12,Printer Paper Ream,Office Supplies,South,3,349,201.98
+ORD-00084,2025-02-12,Gel Pen Pack,Office Supplies,West,4,189.05,90.24
+ORD-00085,2025-02-13,Sticky Notes Pack,Office Supplies,South,4,129,67.65
+ORD-00086,2025-02-15,LED Desk Lamp,Home & Kitchen,Central,1,1299,744.6
+ORD-00087,2025-02-16,Cotton T-Shirt,Fashion,South,1,599,308.33
+ORD-00088,2025-02-16,Storage Container Set,Home & Kitchen,West,10,899,507.03
+ORD-00089,2025-02-16,Power Bank 10000mAh,Electronics,South,8,1799,1091.08
+ORD-00090,2025-02-16,Baseball Cap,Fashion,West,1,449,202.12
+ORD-00091,2025-02-17,Storage Container Set,Home & Kitchen,North,3,899,533.01
+ORD-00092,2025-02-17,Storage Container Set,Home & Kitchen,West,4,899,525.11
+ORD-00093,2025-02-17,Mechanical Keyboard,Electronics,South,3,2499,1554.89
+ORD-00094,2025-02-17,Bluetooth Speaker,Electronics,West,5,1869.15,1369.71
+ORD-00095,2025-02-17,Yoga Mat,Fitness,West,10,949.05,552.32
+ORD-00096,2025-02-18,Power Bank 10000mAh,Electronics,South,1,1709.05,1126.92
+ORD-00097,2025-02-18,Sports Socks Pack,Fashion,West,10,331.55,145.27
+ORD-00098,2025-02-18,Desk Organizer,Office Supplies,South,5,399,216.33
+ORD-00099,2025-02-19,Canvas Backpack,Fashion,North,10,1399,788.83
+ORD-00100,2025-02-19,Wireless Mouse,Electronics,West,1,594.15,442.49
