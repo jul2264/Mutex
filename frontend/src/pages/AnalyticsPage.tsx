@@ -163,50 +163,50 @@ export const AnalyticsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f6f5f4] text-black">
       {/* Top Header */}
-      <header className="border-b border-black/8 bg-[#f6f5f4] sticky top-0 z-20">
+      <header className="border-b border-black/10 bg-white sticky top-0 z-30 shadow-xs">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link to="/" className="font-bold text-xl tracking-tight text-black flex items-center gap-2">
-              <span className="w-6 h-6 rounded bg-[#0075de] text-white text-xs font-bold flex items-center justify-center">
+            <Link to="/" className="font-bold text-xl tracking-tight text-black flex items-center gap-2 hover:opacity-85 transition-opacity">
+              <span className="w-7 h-7 rounded-lg bg-[#0075de] text-white text-xs font-bold flex items-center justify-center shadow-xs">
                 μ
               </span>
               Mutex
             </Link>
-            <span className="text-xs text-[#757575] border-l border-black/10 pl-3">
+            <span className="text-xs font-semibold text-[#555] border-l border-black/15 pl-3">
               Analytics Dashboard
             </span>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-black/8 text-[#615d59]">
-              Dataset: {dataset?.name || 'Sales Data'} ({currency})
+            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#f6f5f4] border border-black/12 text-[#222]">
+              Dataset: <span className="font-bold text-black">{dataset?.name || 'Sales Data'}</span> ({currency})
             </span>
 
             <Link
               to={`/datasets/${activeDatasetId}/reports?${searchParams.toString()}`}
-              className="px-3 py-1.5 rounded-lg border border-black/10 text-xs font-semibold text-[#37352f] hover:bg-black/5 flex items-center gap-1.5 transition-colors"
+              className="px-3.5 py-1.5 rounded-lg border border-black/15 bg-white text-xs font-bold text-[#111] hover:bg-[#f6f5f4] hover:border-black/30 flex items-center gap-1.5 transition-all shadow-2xs"
             >
-              <Download className="w-3.5 h-3.5" /> Export
+              <Download className="w-3.5 h-3.5 text-[#0075de]" /> Export
             </Link>
 
             <Link
               to={`/datasets/${activeDatasetId}`}
-              className="p-1.5 rounded-lg border border-black/10 text-[#757575] hover:text-black hover:bg-black/5 transition-colors"
+              className="p-1.5 rounded-lg border border-black/15 bg-white text-[#555] hover:text-black hover:bg-[#f6f5f4] hover:border-black/30 transition-all shadow-2xs"
               title="Dataset Settings"
             >
               <Settings className="w-4 h-4" />
             </Link>
 
             {user && (
-              <div className="flex items-center gap-2 border-l border-black/10 pl-3">
-                <span className="text-xs text-[#37352f] font-medium hidden sm:inline">
+              <div className="flex items-center gap-2 border-l border-black/15 pl-3">
+                <span className="text-xs text-[#222] font-semibold hidden sm:inline">
                   {user.displayName}
                 </span>
                 <button
                   type="button"
                   onClick={() => logout()}
                   disabled={isLoggingOut}
-                  className="text-xs text-[#757575] hover:text-black hover:bg-black/5 px-2 py-1 rounded transition-colors"
+                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded font-medium transition-colors cursor-pointer"
                 >
                   {isLoggingOut ? 'Logging out...' : 'Sign out'}
                 </button>
@@ -223,20 +223,20 @@ export const AnalyticsPage: React.FC = () => {
           <div>
             <Link
               to="/"
-              className="inline-flex items-center gap-1.5 text-xs text-[#757575] hover:text-black transition-colors mb-2"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#555] hover:text-[#0075de] transition-colors mb-2 group"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
+              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
               All Datasets
             </Link>
             <h1 className="text-2xl font-bold tracking-tight text-black">
               Key Performance Indicators
             </h1>
-            <p className="text-xs text-[#757575] mt-1">
+            <p className="text-xs text-[#555] mt-1 font-medium">
               {summary?.period
                 ? `Active period: ${summary.period.from || 'Dataset start'} to ${summary.period.to || 'Dataset end'}`
                 : 'Loading active date boundaries...'}
               {summary?.period?.previousFrom && (
-                <span className="ml-1 text-[#0075de]">
+                <span className="ml-1 text-[#0075de] font-semibold">
                   (Comparing with {summary.period.previousFrom} to {summary.period.previousTo})
                 </span>
               )}
@@ -244,13 +244,13 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           {summary && (
-            <div className="text-xs text-[#757575] bg-white px-3 py-1.5 rounded-lg border border-black/8 self-start sm:self-auto flex items-center gap-2">
+            <div className="text-xs text-[#444] bg-white px-3.5 py-2 rounded-lg border border-black/12 shadow-2xs self-start sm:self-auto flex items-center gap-2.5 font-medium">
               <span>
-                Orders: <strong className="text-black font-mono">{summary.orders.toLocaleString()}</strong>
+                Orders: <strong className="text-black font-mono font-bold">{summary.orders.toLocaleString()}</strong>
               </span>
-              <span>·</span>
+              <span className="text-black/20">|</span>
               <span>
-                Line Items: <strong className="text-black font-mono">{summary.lineItems.toLocaleString()}</strong>
+                Line Items: <strong className="text-black font-mono font-bold">{summary.lineItems.toLocaleString()}</strong>
               </span>
             </div>
           )}

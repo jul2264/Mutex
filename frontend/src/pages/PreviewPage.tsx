@@ -97,34 +97,34 @@ export const PreviewPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f6f5f4] text-black">
       {/* Header */}
-      <header className="border-b border-black/8 bg-[#f6f5f4] sticky top-0 z-10">
+      <header className="border-b border-black/10 bg-white sticky top-0 z-20 shadow-xs">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link to="/" className="font-bold text-xl tracking-tight text-black flex items-center gap-2">
-              <span className="w-6 h-6 rounded bg-[#0075de] text-white text-xs font-bold flex items-center justify-center">
+            <Link to="/" className="font-bold text-xl tracking-tight text-black flex items-center gap-2 hover:opacity-85 transition-opacity">
+              <span className="w-7 h-7 rounded-lg bg-[#0075de] text-white text-xs font-bold flex items-center justify-center shadow-xs">
                 μ
               </span>
               Mutex
             </Link>
-            <span className="text-xs text-[#757575] border-l border-black/10 pl-3">
+            <span className="text-xs font-semibold text-[#555] border-l border-black/15 pl-3">
               Data Preview & Review
             </span>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-black/8 text-[#615d59]">
-              Dataset: {dataset?.name ?? 'Loading...'}
+            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#f6f5f4] border border-black/12 text-[#222]">
+              Dataset: <span className="font-bold text-black">{dataset?.name ?? 'Loading...'}</span>
             </span>
 
             {user && (
-              <div className="flex items-center gap-2 border-l border-black/10 pl-3">
-                <span className="text-xs text-[#37352f] font-medium hidden sm:inline">
+              <div className="flex items-center gap-2 border-l border-black/15 pl-3">
+                <span className="text-xs text-[#222] font-semibold hidden sm:inline">
                   {user.displayName}
                 </span>
                 <button
                   onClick={() => logout()}
                   disabled={isLoggingOut}
-                  className="text-xs text-[#757575] hover:text-black hover:bg-black/5 px-2 py-1 rounded transition-colors"
+                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded font-medium transition-colors cursor-pointer"
                 >
                   {isLoggingOut ? 'Logging out...' : 'Sign out'}
                 </button>
