@@ -67,30 +67,30 @@ export const DatasetListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f6f5f4] text-black">
       {/* Top Navigation */}
-      <header className="border-b border-black/10 bg-white sticky top-0 z-20 shadow-xs">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/" className="font-bold text-xl tracking-tight text-black flex items-center gap-2 hover:opacity-85 transition-opacity">
-              <span className="w-7 h-7 rounded-lg bg-[#0075de] text-white text-xs font-bold flex items-center justify-center shadow-xs">
+      <header className="border-b border-black/10 bg-white sticky top-0 z-30 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/" className="font-bold text-2xl tracking-tight text-black flex items-center gap-3 hover:opacity-85 transition-opacity">
+              <span className="w-10 h-10 rounded-xl bg-[#0075de] text-white text-base font-extrabold flex items-center justify-center shadow-sm">
                 μ
               </span>
               Mutex
             </Link>
-            <span className="text-xs font-semibold text-[#555] border-l border-black/15 pl-3">
+            <span className="text-sm font-semibold text-[#555] border-l-2 border-black/10 pl-4 py-0.5">
               Datasets
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {user && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-[#222] font-semibold hidden sm:inline">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-[#111] font-semibold hidden sm:inline">
                   {user.displayName}
                 </span>
                 <button
                   onClick={() => logout()}
                   disabled={isLoggingOut}
-                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded font-medium transition-colors cursor-pointer"
+                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-black/10 font-semibold transition-colors cursor-pointer"
                 >
                   {isLoggingOut ? 'Logging out...' : 'Sign out'}
                 </button>
