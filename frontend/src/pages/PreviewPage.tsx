@@ -39,7 +39,9 @@ export const PreviewPage: React.FC = () => {
   // Poll Job Status if targetJobId is present
   const { data: jobStatus } = useImportJob(datasetId, targetJobId);
 
-  const isParsing = jobStatus?.status === 'PARSING' || (!jobStatus && latestJob?.status === 'PARSING');
+  const isTargetJobParsing = Boolean(targetJobId && (!jobStatus || jobStatus.status === 'PARSING'));
+  const isDatasetParsing = Boolean(!targetJobId && dataset?.latestImport?.status === 'PARSING');
+  const isParsing = isTargetJobParsing || isDatasetParsing;
   const isFailed = jobStatus?.status === 'FAILED';
 
   // Automatically invalidate preview and dataset when job reaches VALIDATED
@@ -50,7 +52,14 @@ export const PreviewPage: React.FC = () => {
     }
   }, [jobStatus?.status, datasetId, queryClient]);
 
-  // Fetch Preview Rows (disabled while parsing so we don't cache 0-row empty states)
+  const isReadyToPreview = Boolean(
+    datasetId &&
+      !isParsing &&
+      !isFailed &&
+      (targetJobId ? (jobStatus?.status === 'VALIDATED' || jobStatus?.status === 'COMPLETED') : !datasetLoading)
+  );
+
+  // Fetch Preview Rows (disabled while parsing or before job status is validated)
   const {
     data: preview,
     isLoading: previewLoading,
@@ -63,7 +72,7 @@ export const PreviewPage: React.FC = () => {
         page,
         size: 50,
       }),
-    enabled: !!datasetId && !isParsing && !isFailed,
+    enabled: isReadyToPreview,
     staleTime: 0,
   });
 
@@ -112,12 +121,13 @@ export const PreviewPage: React.FC = () => {
     },
   });
 
-  const counts = preview?.counts ?? {
-    total: jobStatus?.totalRows ?? latestJob?.totalRows ?? 0,
-    valid: jobStatus?.validRows ?? latestJob?.validRows ?? 0,
-    invalid: jobStatus?.invalidRows ?? latestJob?.invalidRows ?? 0,
-    duplicateCandidate: jobStatus?.duplicateRows ?? latestJob?.duplicateRows ?? 0,
-    warnings: jobStatus?.warningCount ?? 0,
+  const counts = {
+    total: jobStatus?.totalRows ?? preview?.counts?.total ?? latestJob?.totalRows ?? 0,
+    valid: jobStatus?.validRows ?? preview?.counts?.valid ?? latestJob?.validRows ?? 0,
+    invalid: jobStatus?.invalidRows ?? preview?.counts?.invalid ?? latestJob?.invalidRows ?? 0,
+    duplicateCandidate:
+      jobStatus?.duplicateRows ?? preview?.counts?.duplicateCandidate ?? latestJob?.duplicateRows ?? 0,
+    warnings: jobStatus?.warningCount ?? preview?.counts?.warnings ?? 0,
   };
 
   const isStaged = preview?.source === 'STAGED' || (!preview && (jobStatus?.status === 'VALIDATED' || isParsing));

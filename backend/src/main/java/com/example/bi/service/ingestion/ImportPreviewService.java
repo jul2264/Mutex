@@ -160,18 +160,36 @@ public class ImportPreviewService {
             return new PreviewResponse("STAGED", counts, page, size, 0L, 0, Collections.emptyList());
         }
 
+        // If the job is still actively parsing, duplicate detection has not completed yet.
+        // Return empty content so we never serve un-deduplicated or partial rows.
+        if (job.getStatus() == ImportJobStatus.PARSING) {
+            PreviewCountsDto counts = new PreviewCountsDto(0, 0, 0, 0, 0);
+            return new PreviewResponse("STAGED", counts, page, size, 0L, 0, Collections.emptyList());
+        }
+
         UUID effectiveJobId = job.getId();
 
-        // Calculate counts
-        StagingRepository.StagingCounts stagingCounts = stagingRepository.calculateCounts(effectiveJobId);
-        int totalStaged = stagingCounts.validRows() + stagingCounts.invalidRows() + stagingCounts.duplicateRows();
-        PreviewCountsDto counts = new PreviewCountsDto(
-                totalStaged,
-                stagingCounts.validRows(),
-                stagingCounts.invalidRows(),
-                stagingCounts.duplicateRows(),
-                stagingCounts.warningCount()
-        );
+        // Calculate counts: for VALIDATED jobs, use the authoritative validated counts from the job record
+        PreviewCountsDto counts;
+        if (job.getStatus() == ImportJobStatus.VALIDATED) {
+            counts = new PreviewCountsDto(
+                    job.getTotalRows(),
+                    job.getValidRows(),
+                    job.getInvalidRows(),
+                    job.getDuplicateRows(),
+                    job.getWarningCount()
+            );
+        } else {
+            StagingRepository.StagingCounts stagingCounts = stagingRepository.calculateCounts(effectiveJobId);
+            int totalStaged = stagingCounts.validRows() + stagingCounts.invalidRows() + stagingCounts.duplicateRows();
+            counts = new PreviewCountsDto(
+                    totalStaged,
+                    stagingCounts.validRows(),
+                    stagingCounts.invalidRows(),
+                    stagingCounts.duplicateRows(),
+                    stagingCounts.warningCount()
+            );
+        }
 
         RowStatus statusFilter = null;
         if (statusParam != null && !statusParam.isBlank() && !"ALL".equalsIgnoreCase(statusParam)) {
