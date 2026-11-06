@@ -146,6 +146,22 @@ export interface ConfirmImportRequest {
   includeDuplicates: boolean;
 }
 
+export interface EditRowRequest {
+  orderId?: string | null;
+  orderDate?: string | null;
+  productName?: string | null;
+  category?: string | null;
+  region?: string | null;
+  quantity?: string | null;
+  unitPrice?: string | null;
+  unitCost?: string | null;
+}
+
+export interface EditRowResponse {
+  row: PreviewRowDto;
+  counts: PreviewCountsDto;
+}
+
 export interface ConfirmImportResponse {
   datasetId: string;
   importJobId: string;

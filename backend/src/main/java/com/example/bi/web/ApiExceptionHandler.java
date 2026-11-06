@@ -173,6 +173,17 @@ public class ApiExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(ImportNotEditableException.class)
+    public ProblemDetail handleImportNotEditable(ImportNotEditableException ex, HttpServletRequest request) {
+        String requestId = resolveRequestId(request);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Import Not Editable");
+        problem.setType(URI.create("https://example.com/errors/IMPORT_NOT_EDITABLE"));
+        problem.setProperty("code", "IMPORT_NOT_EDITABLE");
+        problem.setProperty("requestId", requestId);
+        return problem;
+    }
+
     @ExceptionHandler(StrictPolicyBlockedException.class)
     public ProblemDetail handleStrictPolicyBlocked(StrictPolicyBlockedException ex, HttpServletRequest request) {
         String requestId = resolveRequestId(request);

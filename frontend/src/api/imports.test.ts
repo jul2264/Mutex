@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getPreview, confirmImport, cancelImport, getImportHistory } from './imports';
+import { getPreview, confirmImport, cancelImport, getImportHistory, editRow } from './imports';
 
 describe('imports API client', () => {
   beforeEach(() => {
@@ -136,6 +136,61 @@ describe('imports API client', () => {
     expect(globalThis.fetch).toHaveBeenCalledWith(
       '/api/datasets/ds-100/imports/job-1',
       expect.objectContaining({ credentials: 'same-origin' })
+    );
+  });
+
+  it('editRow sends PATCH to /api/datasets/:id/imports/:jobId/rows/:rowNumber', async () => {
+    const mockResponse = {
+      row: {
+        rowNumber: 3,
+        status: 'VALID',
+        values: {
+          orderId: 'ORD-1001',
+          orderDate: '2026-02-10',
+          productName: 'Product A',
+          category: 'Electronics',
+          region: 'North',
+          quantity: 10,
+          unitPrice: '500.00',
+          unitCost: '300.00',
+        },
+        rawValues: null,
+        issues: [],
+      },
+      counts: {
+        total: 10,
+        valid: 9,
+        invalid: 1,
+        duplicateCandidate: 0,
+        warnings: 0,
+      },
+    };
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockResponse,
+    } as Response);
+
+    const editPayload = {
+      orderId: 'ORD-1001',
+      orderDate: '2026-02-10',
+      productName: 'Product A',
+      category: 'Electronics',
+      region: 'North',
+      quantity: '10',
+      unitPrice: '500.00',
+      unitCost: '300.00',
+    };
+
+    const result = await editRow('ds-100', 'job-1', 3, editPayload);
+    expect(result).toEqual(mockResponse);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/imports/job-1/rows/3',
+      expect.objectContaining({
+        method: 'PATCH',
+        body: JSON.stringify(editPayload),
+      })
     );
   });
 });

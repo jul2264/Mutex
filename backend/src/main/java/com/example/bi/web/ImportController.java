@@ -1,13 +1,11 @@
 package com.example.bi.web;
 
-import com.example.bi.dto.ConfirmImportRequest;
-import com.example.bi.dto.ConfirmImportResponse;
-import com.example.bi.dto.ImportJobStatusResponse;
-import com.example.bi.dto.ImportJobSummaryDto;
+import com.example.bi.dto.*;
 import com.example.bi.service.dataset.DatasetService;
 import com.example.bi.service.ingestion.ImportCancelService;
 import com.example.bi.service.ingestion.ImportCommitService;
 import com.example.bi.service.ingestion.ImportJobService;
+import com.example.bi.service.ingestion.StagingRowEditService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,17 +28,20 @@ public class ImportController {
     private final ImportCommitService importCommitService;
     private final ImportCancelService importCancelService;
     private final DatasetService datasetService;
+    private final StagingRowEditService stagingRowEditService;
 
     public ImportController(
             ImportJobService importJobService,
             ImportCommitService importCommitService,
             ImportCancelService importCancelService,
-            DatasetService datasetService
+            DatasetService datasetService,
+            StagingRowEditService stagingRowEditService
     ) {
         this.importJobService = importJobService;
         this.importCommitService = importCommitService;
         this.importCancelService = importCancelService;
         this.datasetService = datasetService;
+        this.stagingRowEditService = stagingRowEditService;
     }
 
     @GetMapping
@@ -64,6 +65,17 @@ public class ImportController {
             @Valid @RequestBody ConfirmImportRequest request
     ) {
         ConfirmImportResponse response = importCommitService.confirmImport(datasetId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{jobId}/rows/{rowNumber}")
+    public ResponseEntity<EditRowResponse> editRow(
+            @PathVariable("datasetId") UUID datasetId,
+            @PathVariable("jobId") UUID jobId,
+            @PathVariable("rowNumber") int rowNumber,
+            @RequestBody EditRowRequest request
+    ) {
+        EditRowResponse response = stagingRowEditService.editRow(datasetId, jobId, rowNumber, request);
         return ResponseEntity.ok(response);
     }
 

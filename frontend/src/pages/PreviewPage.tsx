@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPreview, confirmImport, cancelImport } from '../api/imports';
+import { getPreview, confirmImport, cancelImport, editRow } from '../api/imports';
 import { getDataset } from '../api/datasets';
 import { useImportJob } from '../hooks/useImportJob';
 import { useAuth } from '../hooks/useAuth';
 import { ApiError } from '../api/apiFetch';
+import type { EditRowRequest, PreviewRowDto } from '../api/types';
 import { Logo } from '../components/common/Logo';
 import { ThemeToggle } from '../components/common/ThemeToggle';
-import { Loader2, AlertCircle, FileCheck, RefreshCw } from 'lucide-react';
+import { Loader2, AlertCircle, FileCheck, RefreshCw, Pencil, Check, X } from 'lucide-react';
 
 type TabStatus = 'ALL' | 'VALID' | 'INVALID' | 'DUPLICATE_CANDIDATE';
 
@@ -25,6 +26,27 @@ export const PreviewPage: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const [includeDuplicates, setIncludeDuplicates] = useState<boolean>(false);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  const [editingRowNumber, setEditingRowNumber] = useState<number | null>(null);
+  const [editValues, setEditValues] = useState<{
+    orderId: string;
+    orderDate: string;
+    productName: string;
+    category: string;
+    region: string;
+    quantity: string;
+    unitPrice: string;
+    unitCost: string;
+  }>({
+    orderId: '',
+    orderDate: '',
+    productName: '',
+    category: '',
+    region: '',
+    quantity: '',
+    unitPrice: '',
+    unitCost: '',
+  });
 
   // Fetch Dataset Details
   const { data: dataset, isLoading: datasetLoading } = useQuery({
@@ -120,6 +142,46 @@ export const PreviewPage: React.FC = () => {
       }
     },
   });
+
+  // Edit Row Mutation
+  const editRowMutation = useMutation({
+    mutationFn: (variables: { rowNumber: number; request: EditRowRequest }) => {
+      const activeJobId = targetJobId || latestJob?.id;
+      if (!activeJobId) throw new Error('No import job found for row editing');
+      return editRow(datasetId!, activeJobId, variables.rowNumber, variables.request);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preview', datasetId] });
+      queryClient.invalidateQueries({ queryKey: ['dataset', datasetId] });
+      if (targetJobId) {
+        queryClient.invalidateQueries({ queryKey: ['importJob', datasetId, targetJobId] });
+      }
+      setEditingRowNumber(null);
+    },
+    onError: (err: unknown) => {
+      if (err instanceof ApiError) {
+        setActionError(err.detail || `Failed to update row: ${err.code}`);
+      } else {
+        setActionError('Failed to update row. Please check the values and try again.');
+      }
+    },
+  });
+
+  const startEditing = (row: PreviewRowDto) => {
+    const raw = (row.rawValues || {}) as Record<string, unknown>;
+    setEditValues({
+      orderId: (row.values.orderId ?? raw.order_id ?? '').toString(),
+      orderDate: (row.values.orderDate ?? raw.order_date ?? '').toString(),
+      productName: (row.values.productName ?? raw.product_name ?? '').toString(),
+      category: (row.values.category ?? raw.category ?? '').toString(),
+      region: (row.values.region ?? raw.region ?? '').toString(),
+      quantity: (row.values.quantity ?? raw.quantity ?? '').toString(),
+      unitPrice: (row.values.unitPrice ?? raw.unit_price ?? '').toString(),
+      unitCost: (row.values.unitCost ?? raw.unit_cost ?? '').toString(),
+    });
+    setEditingRowNumber(row.rowNumber);
+    setActionError(null);
+  };
 
   const counts = {
     total: jobStatus?.totalRows ?? preview?.counts?.total ?? latestJob?.totalRows ?? 0,
@@ -417,72 +479,234 @@ export const PreviewPage: React.FC = () => {
                     <th className="py-3 px-4 text-right">Qty</th>
                     <th className="py-3 px-4 text-right">Unit Price</th>
                     <th className="py-3 px-4 text-right">Unit Cost</th>
+                    {isStaged && <th className="py-3 px-4 text-center w-28">Actions</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-black/5 dark:divide-white/5">
                   {preview.content.map((row) => {
                     const isInvalid = row.status === 'INVALID';
                     const isDuplicate = row.status === 'DUPLICATE_CANDIDATE';
+                    const isEditing = editingRowNumber === row.rowNumber;
 
                     return (
                       <React.Fragment key={row.rowNumber}>
-                        <tr
-                          className={`hover:bg-[#f9f8f6] dark:hover:bg-[#18181b]/60 transition-colors ${
-                            isInvalid
-                              ? 'bg-red-50/30 dark:bg-red-950/20'
-                              : isDuplicate
-                              ? 'bg-amber-50/20 dark:bg-amber-950/20'
-                              : ''
-                          }`}
-                        >
-                          <td className="py-3 px-4 text-[#757575] dark:text-[#a1a1aa] font-mono">{row.rowNumber}</td>
-                          <td className="py-3 px-4">
-                            {row.status === 'VALID' && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
-                                VALID
+                        {isEditing ? (
+                          <tr className="bg-[#0075de]/5 dark:bg-[#38bdf8]/10 border-2 border-[#0075de]/30 dark:border-[#38bdf8]/30">
+                            <td className="py-2 px-3 text-[#757575] dark:text-[#a1a1aa] font-mono">{row.rowNumber}</td>
+                            <td className="py-2 px-3">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-[#0075de]/10 dark:bg-[#38bdf8]/20 text-[#0075de] dark:text-[#38bdf8] border border-[#0075de]/30 dark:border-[#38bdf8]/40 animate-pulse">
+                                EDITING
                               </span>
+                            </td>
+                            <td className="py-2 px-2">
+                              <input
+                                type="text"
+                                value={editValues.orderId}
+                                onChange={(e) => setEditValues((v) => ({ ...v, orderId: e.target.value }))}
+                                className={`w-28 px-2 py-1 text-xs rounded border font-mono bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'order_id')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="Order ID"
+                              />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input
+                                type="text"
+                                value={editValues.orderDate}
+                                onChange={(e) => setEditValues((v) => ({ ...v, orderDate: e.target.value }))}
+                                className={`w-28 px-2 py-1 text-xs rounded border font-mono bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'order_date')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="YYYY-MM-DD"
+                              />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input
+                                type="text"
+                                value={editValues.productName}
+                                onChange={(e) => setEditValues((v) => ({ ...v, productName: e.target.value }))}
+                                className={`w-36 px-2 py-1 text-xs rounded border bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'product_name')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="Product"
+                              />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input
+                                type="text"
+                                value={editValues.category}
+                                onChange={(e) => setEditValues((v) => ({ ...v, category: e.target.value }))}
+                                className={`w-28 px-2 py-1 text-xs rounded border bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'category')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="Category"
+                              />
+                            </td>
+                            <td className="py-2 px-2">
+                              <input
+                                type="text"
+                                value={editValues.region}
+                                onChange={(e) => setEditValues((v) => ({ ...v, region: e.target.value }))}
+                                className={`w-24 px-2 py-1 text-xs rounded border bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'region')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="Region"
+                              />
+                            </td>
+                            <td className="py-2 px-2 text-right">
+                              <input
+                                type="text"
+                                value={editValues.quantity}
+                                onChange={(e) => setEditValues((v) => ({ ...v, quantity: e.target.value }))}
+                                className={`w-16 px-2 py-1 text-xs rounded border font-mono text-right bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'quantity')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="Qty"
+                              />
+                            </td>
+                            <td className="py-2 px-2 text-right">
+                              <input
+                                type="text"
+                                value={editValues.unitPrice}
+                                onChange={(e) => setEditValues((v) => ({ ...v, unitPrice: e.target.value }))}
+                                className={`w-20 px-2 py-1 text-xs rounded border font-mono text-right bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'unit_price')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="Price"
+                              />
+                            </td>
+                            <td className="py-2 px-2 text-right">
+                              <input
+                                type="text"
+                                value={editValues.unitCost}
+                                onChange={(e) => setEditValues((v) => ({ ...v, unitCost: e.target.value }))}
+                                className={`w-20 px-2 py-1 text-xs rounded border font-mono text-right bg-white dark:bg-[#18181b] text-black dark:text-white ${
+                                  row.issues.some((i) => i.column?.toLowerCase() === 'unit_cost')
+                                    ? 'border-red-500 focus:ring-1 focus:ring-red-500 bg-red-50/30 dark:bg-red-950/20'
+                                    : 'border-black/20 dark:border-white/20 focus:ring-1 focus:ring-[#0075de]'
+                                }`}
+                                placeholder="Cost"
+                              />
+                            </td>
+                            <td className="py-2 px-3 text-center">
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button
+                                  type="button"
+                                  disabled={editRowMutation.isPending}
+                                  onClick={() =>
+                                    editRowMutation.mutate({
+                                      rowNumber: row.rowNumber,
+                                      request: editValues,
+                                    })
+                                  }
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 rounded-md shadow-xs transition-colors cursor-pointer"
+                                  title="Save row changes"
+                                >
+                                  {editRowMutation.isPending ? (
+                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                  ) : (
+                                    <Check className="w-3 h-3" />
+                                  )}
+                                  Save
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={editRowMutation.isPending}
+                                  onClick={() => setEditingRowNumber(null)}
+                                  className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-[#666] dark:text-[#a1a1aa] hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+                                  title="Cancel editing"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ) : (
+                          <tr
+                            className={`hover:bg-[#f9f8f6] dark:hover:bg-[#18181b]/60 transition-colors ${
+                              isInvalid
+                                ? 'bg-red-50/30 dark:bg-red-950/20'
+                                : isDuplicate
+                                ? 'bg-amber-50/20 dark:bg-amber-950/20'
+                                : ''
+                            }`}
+                          >
+                            <td className="py-3 px-4 text-[#757575] dark:text-[#a1a1aa] font-mono">{row.rowNumber}</td>
+                            <td className="py-3 px-4">
+                              {row.status === 'VALID' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+                                  VALID
+                                </span>
+                              )}
+                              {row.status === 'INVALID' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/50">
+                                  INVALID
+                                </span>
+                              )}
+                              {row.status === 'DUPLICATE_CANDIDATE' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
+                                  DUPLICATE
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 font-mono font-medium text-[#37352f] dark:text-[#e4e4e7]">
+                              {row.values.orderId ?? <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            <td className="py-3 px-4 text-[#37352f] dark:text-[#e4e4e7]">
+                              {row.values.orderDate ?? <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            <td className="py-3 px-4 font-medium text-[#37352f] dark:text-[#e4e4e7]">
+                              {row.values.productName ?? <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            <td className="py-3 px-4 text-[#757575] dark:text-[#a1a1aa]">
+                              {row.values.category ?? <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            <td className="py-3 px-4 text-[#757575] dark:text-[#a1a1aa]">
+                              {row.values.region ?? <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono text-[#37352f] dark:text-[#e4e4e7]">
+                              {row.values.quantity ?? <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono text-[#37352f] dark:text-[#e4e4e7]">
+                              {row.values.unitPrice ? `₹${row.values.unitPrice}` : <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono text-[#37352f] dark:text-[#e4e4e7]">
+                              {row.values.unitCost ? `₹${row.values.unitCost}` : <span className="text-red-500 italic">missing</span>}
+                            </td>
+                            {isStaged && (
+                              <td className="py-3 px-4 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => startEditing(row)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-[#0075de] dark:text-[#38bdf8] bg-[#0075de]/10 dark:bg-[#38bdf8]/15 hover:bg-[#0075de]/20 dark:hover:bg-[#38bdf8]/25 rounded-md transition-colors cursor-pointer"
+                                  title="Edit row"
+                                >
+                                  <Pencil className="w-3 h-3" />
+                                  Edit
+                                </button>
+                              </td>
                             )}
-                            {row.status === 'INVALID' && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/50">
-                                INVALID
-                              </span>
-                            )}
-                            {row.status === 'DUPLICATE_CANDIDATE' && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
-                                DUPLICATE
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4 font-mono font-medium text-[#37352f] dark:text-[#e4e4e7]">
-                            {row.values.orderId ?? <span className="text-red-500 italic">missing</span>}
-                          </td>
-                          <td className="py-3 px-4 text-[#37352f] dark:text-[#e4e4e7]">
-                            {row.values.orderDate ?? <span className="text-red-500 italic">missing</span>}
-                          </td>
-                          <td className="py-3 px-4 font-medium text-[#37352f] dark:text-[#e4e4e7]">
-                            {row.values.productName ?? <span className="text-red-500 italic">missing</span>}
-                          </td>
-                          <td className="py-3 px-4 text-[#757575] dark:text-[#a1a1aa]">
-                            {row.values.category ?? <span className="text-red-500 italic">missing</span>}
-                          </td>
-                          <td className="py-3 px-4 text-[#757575] dark:text-[#a1a1aa]">
-                            {row.values.region ?? <span className="text-red-500 italic">missing</span>}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono text-[#37352f] dark:text-[#e4e4e7]">
-                            {row.values.quantity ?? <span className="text-red-500 italic">missing</span>}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono text-[#37352f] dark:text-[#e4e4e7]">
-                            {row.values.unitPrice ? `₹${row.values.unitPrice}` : <span className="text-red-500 italic">missing</span>}
-                          </td>
-                          <td className="py-3 px-4 text-right font-mono text-[#37352f] dark:text-[#e4e4e7]">
-                            {row.values.unitCost ? `₹${row.values.unitCost}` : <span className="text-red-500 italic">missing</span>}
-                          </td>
-                        </tr>
+                          </tr>
+                        )}
 
                         {/* Issue banner for rows with issues */}
                         {row.issues.length > 0 && (
                           <tr className={isInvalid ? 'bg-red-50/40 dark:bg-red-950/30' : 'bg-amber-50/30 dark:bg-amber-950/30'}>
-                            <td colSpan={10} className="py-2 px-4 border-b border-black/5 dark:border-white/5">
+                            <td colSpan={isStaged ? 11 : 10} className="py-2 px-4 border-b border-black/5 dark:border-white/5">
                               <div className="flex flex-wrap gap-2 items-center">
                                 {row.issues.map((issue, idx) => (
                                   <span

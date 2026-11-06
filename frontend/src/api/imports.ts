@@ -2,6 +2,8 @@ import { apiFetch, ApiError, getOrFetchCsrfToken } from './apiFetch';
 import type {
   ConfirmImportRequest,
   ConfirmImportResponse,
+  EditRowRequest,
+  EditRowResponse,
   ImportJobStatusResponse,
   ImportJobSummaryDto,
   PreviewResponse,
@@ -108,4 +110,16 @@ export async function cancelImport(datasetId: string, jobId: string): Promise<vo
 
 export async function getImportHistory(datasetId: string): Promise<ImportJobSummaryDto[]> {
   return apiFetch<ImportJobSummaryDto[]>(`/api/datasets/${datasetId}/imports`);
+}
+
+export async function editRow(
+  datasetId: string,
+  jobId: string,
+  rowNumber: number,
+  request: EditRowRequest
+): Promise<EditRowResponse> {
+  return apiFetch<EditRowResponse>(`/api/datasets/${datasetId}/imports/${jobId}/rows/${rowNumber}`, {
+    method: 'PATCH',
+    body: JSON.stringify(request),
+  });
 }
