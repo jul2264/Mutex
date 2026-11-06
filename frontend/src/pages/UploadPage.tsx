@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { uploadDatasetFile } from '../api/imports';
 import { useAuth } from '../hooks/useAuth';
 import { ApiError } from '../api/apiFetch';
@@ -9,10 +9,20 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
 export const UploadPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout, isLoggingOut } = useAuth();
 
-  const [name, setName] = useState<string>('');
-  const [file, setFile] = useState<File | null>(null);
+  const stateFile = (location.state as { file?: File } | null)?.file;
+  const initialFile = stateFile instanceof File ? stateFile : null;
+  const initialName = initialFile
+    ? (() => {
+        const base = initialFile.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
+        return base.charAt(0).toUpperCase() + base.slice(1);
+      })()
+    : '';
+
+  const [name, setName] = useState<string>(initialName);
+  const [file, setFile] = useState<File | null>(initialFile);
   const [dateFormat, setDateFormat] = useState<'ISO' | 'DMY' | 'MDY'>('ISO');
   const [policy, setPolicy] = useState<'IMPORT_VALID_ONLY' | 'REJECT_FILE_ON_ANY_ERROR'>('IMPORT_VALID_ONLY');
   const [currency, setCurrency] = useState<string>('INR');
@@ -20,8 +30,9 @@ export const UploadPage: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
 
-  const handleFileChange = (selectedFile: File | null) => {
+  const handleFileChange = useCallback((selectedFile: File | null) => {
     setErrorMessage(null);
     if (!selectedFile) {
       setFile(null);
@@ -42,12 +53,14 @@ export const UploadPage: React.FC = () => {
     }
 
     setFile(selectedFile);
-    if (!name.trim()) {
-      // Auto-populate default name from filename without extension
-      const baseName = selectedFile.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
-      setName(baseName.charAt(0).toUpperCase() + baseName.slice(1));
-    }
-  };
+    setName((prev) => {
+      if (!prev.trim()) {
+        const baseName = selectedFile.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
+        return baseName.charAt(0).toUpperCase() + baseName.slice(1);
+      }
+      return prev;
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,8 +192,28 @@ export const UploadPage: React.FC = () => {
               Spreadsheet File (.CSV or .XLSX) <span className="text-red-500">*</span>
             </label>
             <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (!isUploading) setIsDragOver(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+                setIsDragOver(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragOver(false);
+                if (isUploading) return;
+                const dropped = e.dataTransfer.files?.[0];
+                if (dropped) handleFileChange(dropped);
+              }}
               className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
-                file ? 'border-emerald-400 bg-emerald-50/30' : 'border-black/15 bg-[#faf9f8] hover:border-black/30'
+                isDragOver
+                  ? 'border-[#0075de] bg-[#0075de]/10 ring-4 ring-[#0075de]/20'
+                  : file
+                  ? 'border-emerald-400 bg-emerald-50/30'
+                  : 'border-black/15 bg-[#faf9f8] hover:border-black/30'
               }`}
             >
               <input
@@ -197,7 +230,7 @@ export const UploadPage: React.FC = () => {
                     <CheckCircle2 className="w-10 h-10 text-emerald-600 mb-2" />
                     <span className="text-sm font-semibold text-black">{file.name}</span>
                     <span className="text-xs text-[#757575] mt-1">
-                      {(file.size / 1024).toFixed(1)} KB · Click to change file
+                      {(file.size / 1024).toFixed(1)} KB · Click or drag to change file
                     </span>
                   </>
                 ) : (
@@ -205,7 +238,9 @@ export const UploadPage: React.FC = () => {
                     <div className="w-12 h-12 rounded-full bg-[#0075de]/10 flex items-center justify-center text-[#0075de] mb-3">
                       <FileSpreadsheet className="w-6 h-6" />
                     </div>
-                    <span className="text-sm font-semibold text-black">Click to browse or drag and drop</span>
+                    <span className="text-sm font-semibold text-black">
+                      {isDragOver ? 'Drop file to upload' : 'Click to browse or drag and drop'}
+                    </span>
                     <span className="text-xs text-[#757575] mt-1">Supports UTF-8 CSV or Excel XLSX (max 10 MB)</span>
                   </>
                 )}

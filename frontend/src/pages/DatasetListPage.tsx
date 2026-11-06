@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { listDatasets, renameDataset, deleteDataset } from '../api/datasets';
 import { useAuth } from '../hooks/useAuth';
 import type { DatasetResponse } from '../api/types';
 import { ApiError } from '../api/apiFetch';
+import { Upload, FileSpreadsheet, AlertCircle } from 'lucide-react';
 
 export const DatasetListPage: React.FC = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user, logout, isLoggingOut } = useAuth();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isWindowDragging, setIsWindowDragging] = useState<boolean>(false);
+  const [dropError, setDropError] = useState<string | null>(null);
 
   const [page, setPage] = useState<number>(0);
   const [editingDataset, setEditingDataset] = useState<DatasetResponse | null>(null);
@@ -16,6 +23,67 @@ export const DatasetListPage: React.FC = () => {
   const [deletingDataset, setDeletingDataset] = useState<DatasetResponse | null>(null);
   const [confirmDeleteInput, setConfirmDeleteInput] = useState<string>('');
   const [dialogError, setDialogError] = useState<string | null>(null);
+
+  const handleFileSelected = useCallback((selectedFile: File) => {
+    setDropError(null);
+    const lower = selectedFile.name.toLowerCase();
+    if (!lower.endsWith('.csv') && !lower.endsWith('.xlsx')) {
+      setDropError('Invalid format: Please upload a .csv or .xlsx sales spreadsheet.');
+      return;
+    }
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setDropError('File size exceeds the 10 MB limit.');
+      return;
+    }
+    navigate('/datasets/upload', { state: { file: selectedFile } });
+  }, [navigate]);
+
+  useEffect(() => {
+    let dragCounter = 0;
+
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounter++;
+      if (e.dataTransfer && e.dataTransfer.types.includes('Files')) {
+        setIsWindowDragging(true);
+      }
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        setIsWindowDragging(false);
+        dragCounter = 0;
+      }
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounter = 0;
+      setIsWindowDragging(false);
+      const dropped = e.dataTransfer?.files?.[0];
+      if (dropped) {
+        handleFileSelected(dropped);
+      }
+    };
+
+    window.addEventListener('dragenter', handleDragEnter);
+    window.addEventListener('dragleave', handleDragLeave);
+    window.addEventListener('dragover', handleDragOver);
+    window.addEventListener('drop', handleDrop);
+
+    return () => {
+      window.removeEventListener('dragenter', handleDragEnter);
+      window.removeEventListener('dragleave', handleDragLeave);
+      window.removeEventListener('dragover', handleDragOver);
+      window.removeEventListener('drop', handleDrop);
+    };
+  }, [handleFileSelected]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['datasets', page],
@@ -65,7 +133,31 @@ export const DatasetListPage: React.FC = () => {
   const datasets = data?.content ?? [];
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] text-black">
+    <div className="min-h-screen bg-[#f6f5f4] text-black relative">
+      {/* Fullscreen Drag Overlay */}
+      {isWindowDragging && (
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsWindowDragging(false);
+            const dropped = e.dataTransfer?.files?.[0];
+            if (dropped) handleFileSelected(dropped);
+          }}
+          className="fixed inset-0 z-50 bg-[#0075de]/20 backdrop-blur-xs border-4 border-dashed border-[#0075de] flex flex-col items-center justify-center p-6 animate-in fade-in duration-150 pointer-events-auto"
+        >
+          <div className="bg-white rounded-2xl shadow-2xl p-10 flex flex-col items-center text-center max-w-md w-full border border-black/10">
+            <div className="w-16 h-16 rounded-2xl bg-[#0075de]/10 text-[#0075de] flex items-center justify-center mb-4">
+              <Upload className="w-8 h-8 animate-bounce" />
+            </div>
+            <h2 className="text-xl font-bold text-black mb-1">Drop spreadsheet to upload</h2>
+            <p className="text-xs text-[#666]">
+              Release your .CSV or .XLSX file anywhere to validate and review your dataset.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Top Navigation */}
       <header className="border-b border-black/10 bg-white sticky top-0 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -127,21 +219,89 @@ export const DatasetListPage: React.FC = () => {
               Error loading datasets: {(error as Error)?.message}
             </div>
           ) : datasets.length === 0 ? (
-            <div className="py-20 text-center">
-              <div className="w-12 h-12 rounded-full bg-black/5 text-[#757575] flex items-center justify-center mx-auto mb-3 text-lg font-mono">
-                📁
-              </div>
-              <h3 className="text-sm font-semibold text-[#37352f]">No datasets yet</h3>
-              <p className="text-xs text-[#757575] mt-1 max-w-sm mx-auto mb-4">
-                Upload a CSV or XLSX spreadsheet to start exploring your business metrics.
-              </p>
-              <Link
-                to="/datasets/upload"
-                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg bg-black text-white hover:bg-black/85 transition-colors shadow-xs"
+            <div className="p-8 sm:p-12">
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+                  setIsDragging(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  const dropped = e.dataTransfer.files?.[0];
+                  if (dropped) handleFileSelected(dropped);
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className={`relative border-2 border-dashed rounded-2xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-200 group ${
+                  isDragging
+                    ? 'border-[#0075de] bg-[#0075de]/10 scale-[1.005] ring-4 ring-[#0075de]/20'
+                    : 'border-black/20 bg-[#faf9f8] hover:border-black/40 hover:bg-[#f5f4f2]'
+                }`}
               >
-                <span className="text-sm leading-none">+</span>
-                <span>Upload Dataset</span>
-              </Link>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,.xlsx"
+                  className="hidden"
+                  onChange={(e) => {
+                    const selected = e.target.files?.[0];
+                    if (selected) handleFileSelected(selected);
+                  }}
+                />
+
+                <div
+                  className={`w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-all ${
+                    isDragging
+                      ? 'bg-[#0075de] text-white scale-110 shadow-md'
+                      : 'bg-black/5 text-[#333] group-hover:bg-[#0075de]/10 group-hover:text-[#0075de] group-hover:scale-105'
+                  }`}
+                >
+                  <Upload className="w-8 h-8" />
+                </div>
+
+                <h3 className="text-base font-bold text-black mb-1">
+                  {isDragging ? 'Drop your spreadsheet here to upload' : 'Drag & drop your sales spreadsheet here'}
+                </h3>
+                <p className="text-xs text-[#666] max-w-sm mx-auto mb-5 leading-relaxed">
+                  Supports <span className="font-semibold text-black">CSV</span> or <span className="font-semibold text-black">Excel (.XLSX)</span> files up to 10 MB.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-lg bg-black text-white hover:bg-[#0075de] transition-colors shadow-sm cursor-pointer"
+                  >
+                    <FileSpreadsheet className="w-4 h-4" />
+                    <span>Browse Files</span>
+                  </button>
+                  <Link
+                    to="/datasets/upload"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-xs text-[#666] hover:text-black font-medium underline underline-offset-4"
+                  >
+                    Or open manual upload form →
+                  </Link>
+                </div>
+
+                {dropError && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-5 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center justify-center gap-2 max-w-md mx-auto"
+                  >
+                    <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>{dropError}</span>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div className="overflow-x-auto">
