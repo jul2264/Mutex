@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { ApiError } from '../api/apiFetch';
+import { Logo } from '../components/common/Logo';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,22 +38,23 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#09090b] text-black dark:text-white flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative transition-colors">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center gap-2 mb-2">
-          <span className="w-8 h-8 rounded-lg bg-[#0075de] text-white text-base font-bold flex items-center justify-center shadow-xs">
-            μ
-          </span>
-          <span className="text-2xl font-bold tracking-tight text-black">Mutex</span>
+        <div className="flex justify-center mb-3">
+          <Logo size="lg" />
         </div>
-        <h2 className="text-lg font-medium text-[#37352f]">Log in to your account</h2>
-        <p className="mt-1 text-xs text-[#757575]">
+        <h2 className="text-lg font-medium text-[#37352f] dark:text-[#e4e4e7]">Log in to your account</h2>
+        <p className="mt-1 text-xs text-[#757575] dark:text-[#a1a1aa]">
           Sign in to access your sales datasets and KPI analytics.
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="bg-white py-8 px-6 shadow-xs border border-black/8 rounded-xl sm:px-10">
+        <div className="bg-white dark:bg-[#0f0f10] py-8 px-6 shadow-xs border border-black/8 dark:border-white/10 rounded-xl sm:px-10">
           {errorMessage && (
             <div
               role="alert"

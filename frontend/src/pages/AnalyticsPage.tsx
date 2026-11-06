@@ -28,6 +28,8 @@ import {
   RotateCcw,
   Info,
 } from 'lucide-react';
+import { Logo } from '../components/common/Logo';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export const AnalyticsPage: React.FC = () => {
   const { datasetId } = useParams<{ datasetId?: string }>();
@@ -161,52 +163,49 @@ export const AnalyticsPage: React.FC = () => {
   const isEmpty = summary && summary.lineItems === 0;
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] text-black">
+    <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#09090b] text-black dark:text-white transition-colors">
       {/* Top Header */}
-      <header className="border-b border-black/10 bg-white sticky top-0 z-30 shadow-sm">
+      <header className="border-b border-black/10 dark:border-white/10 bg-white dark:bg-[#0f0f10] sticky top-0 z-30 shadow-sm transition-colors">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/" className="font-bold text-2xl tracking-tight text-black flex items-center gap-3 hover:opacity-85 transition-opacity">
-              <span className="w-10 h-10 rounded-xl bg-[#0075de] text-white text-base font-extrabold flex items-center justify-center shadow-sm">
-                μ
-              </span>
-              Mutex
-            </Link>
-            <span className="text-sm font-semibold text-[#555] border-l-2 border-black/10 pl-4 py-0.5">
+            <Logo />
+            <span className="text-sm font-semibold text-[#555] dark:text-[#a1a1aa] border-l-2 border-black/10 dark:border-white/10 pl-4 py-0.5">
               Analytics Dashboard
             </span>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#f6f5f4] border border-black/15 text-[#222]">
-              Dataset: <span className="font-bold text-black">{dataset?.name || 'Sales Data'}</span> ({currency})
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#f6f5f4] dark:bg-[#18181b] border border-black/15 dark:border-white/15 text-[#222] dark:text-[#f4f4f5]">
+              Dataset: <span className="font-bold text-black dark:text-white">{dataset?.name || 'Sales Data'}</span> ({currency})
             </span>
 
             <Link
               to={`/datasets/${activeDatasetId}/reports?${searchParams.toString()}`}
-              className="px-4 py-2 rounded-lg border border-black/15 bg-white text-xs font-bold text-[#111] hover:bg-[#f6f5f4] hover:border-black/30 flex items-center gap-2 transition-all shadow-2xs"
+              className="px-4 py-2 rounded-lg border border-black/15 dark:border-white/15 bg-white dark:bg-[#18181b] text-xs font-bold text-[#111] dark:text-[#f4f4f5] hover:bg-[#f6f5f4] dark:hover:bg-[#27272a] hover:border-black/30 dark:hover:border-white/30 flex items-center gap-2 transition-all shadow-2xs"
             >
               <Download className="w-4 h-4 text-[#0075de]" /> Export
             </Link>
 
             <Link
               to={`/datasets/${activeDatasetId}`}
-              className="p-2 rounded-lg border border-black/15 bg-white text-[#555] hover:text-black hover:bg-[#f6f5f4] hover:border-black/30 transition-all shadow-2xs"
+              className="p-2 rounded-lg border border-black/15 dark:border-white/15 bg-white dark:bg-[#18181b] text-[#555] dark:text-[#a1a1aa] hover:text-black dark:hover:text-white hover:bg-[#f6f5f4] dark:hover:bg-[#27272a] hover:border-black/30 dark:hover:border-white/30 transition-all shadow-2xs"
               title="Dataset Settings"
             >
               <Settings className="w-4 h-4" />
             </Link>
 
+            <ThemeToggle />
+
             {user && (
-              <div className="flex items-center gap-3 border-l-2 border-black/10 pl-4">
-                <span className="text-sm text-[#111] font-semibold hidden sm:inline">
+              <div className="flex items-center gap-3 border-l-2 border-black/10 dark:border-white/10 pl-3">
+                <span className="text-sm text-[#111] dark:text-[#f4f4f5] font-semibold hidden sm:inline">
                   {user.displayName}
                 </span>
                 <button
                   type="button"
                   onClick={() => logout()}
                   disabled={isLoggingOut}
-                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-black/10 font-semibold transition-colors cursor-pointer"
+                  className="text-xs text-[#666] dark:text-[#a1a1aa] hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-1.5 rounded-lg border border-black/10 dark:border-white/15 font-semibold transition-colors cursor-pointer"
                 >
                   {isLoggingOut ? 'Logging out...' : 'Sign out'}
                 </button>

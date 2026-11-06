@@ -6,6 +6,8 @@ import { useAuth } from '../hooks/useAuth';
 import type { DatasetResponse } from '../api/types';
 import { ApiError } from '../api/apiFetch';
 import { Upload, FileSpreadsheet, AlertCircle } from 'lucide-react';
+import { Logo } from '../components/common/Logo';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export const DatasetListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -159,30 +161,26 @@ export const DatasetListPage: React.FC = () => {
       )}
 
       {/* Top Navigation */}
-      <header className="border-b border-black/10 bg-white sticky top-0 z-30 shadow-sm">
+      <header className="border-b border-black/10 dark:border-white/10 bg-white dark:bg-[#0f0f10] sticky top-0 z-30 shadow-sm transition-colors">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/" className="font-bold text-2xl tracking-tight text-black flex items-center gap-3 hover:opacity-85 transition-opacity">
-              <span className="w-10 h-10 rounded-xl bg-[#0075de] text-white text-base font-extrabold flex items-center justify-center shadow-sm">
-                μ
-              </span>
-              Mutex
-            </Link>
-            <span className="text-sm font-semibold text-[#555] border-l-2 border-black/10 pl-4 py-0.5">
+            <Logo />
+            <span className="text-sm font-semibold text-[#555] dark:text-[#a1a1aa] border-l-2 border-black/10 dark:border-white/10 pl-4 py-0.5">
               Datasets
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
             {user && (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-[#111] font-semibold hidden sm:inline">
+              <div className="flex items-center gap-3 border-l border-black/10 dark:border-white/10 pl-3">
+                <span className="text-sm text-[#111] dark:text-[#f4f4f5] font-semibold hidden sm:inline">
                   {user.displayName}
                 </span>
                 <button
                   onClick={() => logout()}
                   disabled={isLoggingOut}
-                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-black/10 font-semibold transition-colors cursor-pointer"
+                  className="text-xs text-[#666] dark:text-[#a1a1aa] hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-1.5 rounded-lg border border-black/10 dark:border-white/15 font-semibold transition-colors cursor-pointer"
                 >
                   {isLoggingOut ? 'Logging out...' : 'Sign out'}
                 </button>
@@ -196,14 +194,14 @@ export const DatasetListPage: React.FC = () => {
       <main className="max-w-6xl mx-auto px-6 py-8">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-black">Sales Datasets</h1>
-            <p className="text-sm text-[#757575] mt-1">
+            <h1 className="text-2xl font-bold tracking-tight text-black dark:text-white">Sales Datasets</h1>
+            <p className="text-sm text-[#757575] dark:text-[#a1a1aa] mt-1">
               Manage uploaded sales files, review data quality, and explore KPI analytics.
             </p>
           </div>
           <Link
             to="/datasets/upload"
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg bg-black text-white hover:bg-black/85 transition-colors shadow-xs"
+            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg bg-black text-white hover:bg-black/85 dark:bg-white dark:text-black dark:hover:bg-white/90 transition-colors shadow-xs"
           >
             <span className="text-sm leading-none">+</span>
             <span>Upload Dataset</span>
@@ -211,11 +209,11 @@ export const DatasetListPage: React.FC = () => {
         </div>
 
         {/* Dataset Table / List */}
-        <div className="bg-white border border-black/8 rounded-xl shadow-xs overflow-hidden">
+        <div className="bg-white dark:bg-[#0f0f10] border border-black/8 dark:border-white/10 rounded-xl shadow-xs overflow-hidden">
           {isLoading ? (
-            <div className="py-20 text-center text-xs text-[#757575]">Loading datasets...</div>
+            <div className="py-20 text-center text-xs text-[#757575] dark:text-[#a1a1aa]">Loading datasets...</div>
           ) : isError ? (
-            <div className="py-20 text-center text-xs text-red-600">
+            <div className="py-20 text-center text-xs text-red-600 dark:text-red-400">
               Error loading datasets: {(error as Error)?.message}
             </div>
           ) : datasets.length === 0 ? (
@@ -239,8 +237,8 @@ export const DatasetListPage: React.FC = () => {
                 onClick={() => fileInputRef.current?.click()}
                 className={`relative border-2 border-dashed rounded-2xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-200 group ${
                   isDragging
-                    ? 'border-[#0075de] bg-[#0075de]/10 scale-[1.005] ring-4 ring-[#0075de]/20'
-                    : 'border-black/20 bg-[#faf9f8] hover:border-black/40 hover:bg-[#f5f4f2]'
+                    ? 'border-[#0075de] bg-[#0075de]/10 dark:bg-[#0075de]/20 scale-[1.005] ring-4 ring-[#0075de]/20'
+                    : 'border-black/20 dark:border-white/15 bg-[#faf9f8] dark:bg-[#141416] hover:border-black/40 dark:hover:border-white/30 hover:bg-[#f5f4f2] dark:hover:bg-[#1c1c1f]'
                 }`}
               >
                 <input
@@ -258,17 +256,17 @@ export const DatasetListPage: React.FC = () => {
                   className={`w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-all ${
                     isDragging
                       ? 'bg-[#0075de] text-white scale-110 shadow-md'
-                      : 'bg-black/5 text-[#333] group-hover:bg-[#0075de]/10 group-hover:text-[#0075de] group-hover:scale-105'
+                      : 'bg-black/5 dark:bg-white/10 text-[#333] dark:text-[#f4f4f5] group-hover:bg-[#0075de]/10 group-hover:text-[#0075de] group-hover:scale-105'
                   }`}
                 >
                   <Upload className="w-8 h-8" />
                 </div>
 
-                <h3 className="text-base font-bold text-black mb-1">
+                <h3 className="text-base font-bold text-black dark:text-white mb-1">
                   {isDragging ? 'Drop your spreadsheet here to upload' : 'Drag & drop your sales spreadsheet here'}
                 </h3>
-                <p className="text-xs text-[#666] max-w-sm mx-auto mb-5 leading-relaxed">
-                  Supports <span className="font-semibold text-black">CSV</span> or <span className="font-semibold text-black">Excel (.XLSX)</span> files up to 10 MB.
+                <p className="text-xs text-[#666] dark:text-[#a1a1aa] max-w-sm mx-auto mb-5 leading-relaxed">
+                  Supports <span className="font-semibold text-black dark:text-white">CSV</span> or <span className="font-semibold text-black dark:text-white">Excel (.XLSX)</span> files up to 10 MB.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -278,7 +276,7 @@ export const DatasetListPage: React.FC = () => {
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-lg bg-black text-white hover:bg-[#0075de] transition-colors shadow-sm cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-lg bg-black text-white hover:bg-[#0075de] dark:bg-white dark:text-black dark:hover:bg-[#0075de] dark:hover:text-white transition-colors shadow-sm cursor-pointer"
                   >
                     <FileSpreadsheet className="w-4 h-4" />
                     <span>Browse Files</span>
@@ -286,7 +284,7 @@ export const DatasetListPage: React.FC = () => {
                   <Link
                     to="/datasets/upload"
                     onClick={(e) => e.stopPropagation()}
-                    className="text-xs text-[#666] hover:text-black font-medium underline underline-offset-4"
+                    className="text-xs text-[#666] dark:text-[#a1a1aa] hover:text-black dark:hover:text-white font-medium underline underline-offset-4"
                   >
                     Or open manual upload form →
                   </Link>
@@ -295,9 +293,9 @@ export const DatasetListPage: React.FC = () => {
                 {dropError && (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className="mt-5 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center justify-center gap-2 max-w-md mx-auto"
+                    className="mt-5 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-400 text-xs flex items-center justify-center gap-2 max-w-md mx-auto"
                   >
-                    <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                    <AlertCircle className="w-4 h-4 shrink-0 text-red-600 dark:text-red-400" />
                     <span>{dropError}</span>
                   </div>
                 )}
@@ -306,7 +304,7 @@ export const DatasetListPage: React.FC = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#fcfbf9] border-b border-black/8 text-[#757575] uppercase text-[10px] font-semibold tracking-wider">
+                <thead className="bg-[#fcfbf9] dark:bg-[#141416] border-b border-black/8 dark:border-white/10 text-[#757575] dark:text-[#a1a1aa] uppercase text-[10px] font-semibold tracking-wider">
                   <tr>
                     <th className="py-3 px-4">Dataset Name</th>
                     <th className="py-3 px-4 w-28">Status</th>
@@ -316,10 +314,10 @@ export const DatasetListPage: React.FC = () => {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-black/5">
+                <tbody className="divide-y divide-black/5 dark:divide-white/5">
                   {datasets.map((ds) => (
-                    <tr key={ds.id} className="hover:bg-[#f9f8f6] transition-colors">
-                      <td className="py-3.5 px-4 font-medium text-black">
+                    <tr key={ds.id} className="hover:bg-[#f9f8f6] dark:hover:bg-[#18181b] transition-colors">
+                      <td className="py-3.5 px-4 font-medium text-black dark:text-white">
                         <Link
                           to={ds.status === 'ACTIVE' ? `/datasets/${ds.id}/analytics` : `/datasets/${ds.id}/preview`}
                           className="hover:text-[#0075de] hover:underline"
@@ -329,24 +327,24 @@ export const DatasetListPage: React.FC = () => {
                       </td>
                       <td className="py-3.5 px-4">
                         {ds.status === 'ACTIVE' ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                             ACTIVE
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
                             DRAFT
                           </span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-mono text-[#37352f]">
+                      <td className="py-3.5 px-4 text-right font-mono text-[#37352f] dark:text-[#e4e4e7]">
                         {ds.rowCount.toLocaleString()}
                       </td>
-                      <td className="py-3.5 px-4 text-[#757575]">
+                      <td className="py-3.5 px-4 text-[#757575] dark:text-[#a1a1aa]">
                         {ds.minOrderDate && ds.maxOrderDate
                           ? `${ds.minOrderDate} to ${ds.maxOrderDate}`
                           : '—'}
                       </td>
-                      <td className="py-3.5 px-4 text-[#757575]">
+                      <td className="py-3.5 px-4 text-[#757575] dark:text-[#a1a1aa]">
                         {new Date(ds.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-3.5 px-4 text-right">
@@ -361,7 +359,7 @@ export const DatasetListPage: React.FC = () => {
                           )}
                           <Link
                             to={`/datasets/${ds.id}/preview`}
-                            className="px-2.5 py-1 text-xs font-medium text-[#37352f] hover:bg-black/5 rounded transition-colors"
+                            className="px-2.5 py-1 text-xs font-medium text-[#37352f] dark:text-[#e4e4e7] hover:bg-black/5 dark:hover:bg-white/10 rounded transition-colors"
                           >
                             Preview
                           </Link>
@@ -371,7 +369,7 @@ export const DatasetListPage: React.FC = () => {
                               setRenameInput(ds.name);
                               setDialogError(null);
                             }}
-                            className="px-2 py-1 text-xs text-[#757575] hover:text-black hover:bg-black/5 rounded transition-colors"
+                            className="px-2 py-1 text-xs text-[#757575] dark:text-[#a1a1aa] hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded transition-colors"
                           >
                             Rename
                           </button>
@@ -381,7 +379,7 @@ export const DatasetListPage: React.FC = () => {
                               setConfirmDeleteInput('');
                               setDialogError(null);
                             }}
-                            className="px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                            className="px-2 py-1 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 rounded transition-colors"
                           >
                             Delete
                           </button>
@@ -396,7 +394,7 @@ export const DatasetListPage: React.FC = () => {
 
           {/* Pagination */}
           {data && data.totalPages > 1 && (
-            <div className="border-t border-black/8 px-6 py-3 bg-[#fcfbf9] flex items-center justify-between text-xs text-[#757575]">
+            <div className="border-t border-black/8 dark:border-white/10 px-6 py-3 bg-[#fcfbf9] dark:bg-[#141416] flex items-center justify-between text-xs text-[#757575] dark:text-[#a1a1aa]">
               <span>
                 Page {page + 1} of {data.totalPages} ({data.totalElements} datasets)
               </span>
@@ -404,14 +402,14 @@ export const DatasetListPage: React.FC = () => {
                 <button
                   onClick={() => setPage((p) => Math.max(p - 1, 0))}
                   disabled={page === 0}
-                  className="px-3 py-1 bg-white border border-black/10 rounded hover:bg-black/5 disabled:opacity-40 disabled:cursor-not-allowed font-medium text-black"
+                  className="px-3 py-1 bg-white dark:bg-[#18181b] border border-black/10 dark:border-white/15 rounded hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed font-medium text-black dark:text-white"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(p + 1, data.totalPages - 1))}
                   disabled={page >= data.totalPages - 1}
-                  className="px-3 py-1 bg-white border border-black/10 rounded hover:bg-black/5 disabled:opacity-40 disabled:cursor-not-allowed font-medium text-black"
+                  className="px-3 py-1 bg-white dark:bg-[#18181b] border border-black/10 dark:border-white/15 rounded hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed font-medium text-black dark:text-white"
                 >
                   Next
                 </button>
@@ -423,15 +421,15 @@ export const DatasetListPage: React.FC = () => {
 
       {/* Rename Modal */}
       {editingDataset && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 border border-black/10">
-            <h3 className="text-base font-semibold text-black mb-1">Rename Dataset</h3>
-            <p className="text-xs text-[#757575] mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-[#141416] rounded-xl shadow-xl max-w-md w-full p-6 border border-black/10 dark:border-white/15 text-black dark:text-white">
+            <h3 className="text-base font-semibold text-black dark:text-white mb-1">Rename Dataset</h3>
+            <p className="text-xs text-[#757575] dark:text-[#a1a1aa] mb-4">
               Enter a new name for this dataset (unique across your account).
             </p>
 
             {dialogError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-xs text-red-700 rounded-lg">
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs text-red-700 dark:text-red-400 rounded-lg">
                 {dialogError}
               </div>
             )}
@@ -448,21 +446,21 @@ export const DatasetListPage: React.FC = () => {
                 maxLength={100}
                 value={renameInput}
                 onChange={(e) => setRenameInput(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-white border border-black/15 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] mb-4"
+                className="w-full px-3 py-2 text-sm bg-white dark:bg-[#1c1c1f] border border-black/15 dark:border-white/15 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] mb-4 text-black dark:text-white"
               />
 
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setEditingDataset(null)}
-                  className="px-3 py-1.5 text-xs text-[#757575] hover:text-black bg-white hover:bg-black/5 border border-black/10 rounded-lg"
+                  className="px-3 py-1.5 text-xs text-[#757575] dark:text-[#a1a1aa] hover:text-black dark:hover:text-white bg-white dark:bg-[#18181b] hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/15 rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!renameInput.trim() || renameMutation.isPending}
-                  className="px-4 py-1.5 text-xs font-semibold text-white bg-[#0075de] hover:bg-[#0060b8] disabled:opacity-50 rounded-lg"
+                  className="px-4 py-1.5 text-xs font-semibold text-white bg-[#0075de] hover:bg-[#0060b8] disabled:opacity-50 rounded-lg cursor-pointer"
                 >
                   {renameMutation.isPending ? 'Saving...' : 'Save Name'}
                 </button>
@@ -474,18 +472,18 @@ export const DatasetListPage: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {deletingDataset && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 border border-black/10">
-            <h3 className="text-base font-semibold text-red-700 mb-1">Delete Dataset</h3>
-            <p className="text-xs text-[#757575] mb-3">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-[#141416] rounded-xl shadow-xl max-w-md w-full p-6 border border-black/10 dark:border-white/15 text-black dark:text-white">
+            <h3 className="text-base font-semibold text-red-700 dark:text-red-400 mb-1">Delete Dataset</h3>
+            <p className="text-xs text-[#757575] dark:text-[#a1a1aa] mb-3">
               This action cannot be undone. All sales records, staging data, and import history will be permanently deleted.
             </p>
-            <p className="text-xs text-[#37352f] mb-2 font-medium">
-              Please type <strong className="text-black select-all bg-black/5 px-1 py-0.5 rounded font-mono">{deletingDataset.name}</strong> to confirm:
+            <p className="text-xs text-[#37352f] dark:text-[#e4e4e7] mb-2 font-medium">
+              Please type <strong className="text-black dark:text-white select-all bg-black/5 dark:bg-white/10 px-1 py-0.5 rounded font-mono">{deletingDataset.name}</strong> to confirm:
             </p>
 
             {dialogError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-xs text-red-700 rounded-lg">
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs text-red-700 dark:text-red-400 rounded-lg">
                 {dialogError}
               </div>
             )}
@@ -502,14 +500,14 @@ export const DatasetListPage: React.FC = () => {
                 value={confirmDeleteInput}
                 onChange={(e) => setConfirmDeleteInput(e.target.value)}
                 placeholder={deletingDataset.name}
-                className="w-full px-3 py-2 text-sm bg-white border border-black/15 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-red-500/30 focus:border-red-600 mb-4 font-mono"
+                className="w-full px-3 py-2 text-sm bg-white dark:bg-[#1c1c1f] border border-black/15 dark:border-white/15 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-red-500/30 focus:border-red-600 mb-4 font-mono text-black dark:text-white"
               />
 
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setDeletingDataset(null)}
-                  className="px-3 py-1.5 text-xs text-[#757575] hover:text-black bg-white hover:bg-black/5 border border-black/10 rounded-lg"
+                  className="px-3 py-1.5 text-xs text-[#757575] dark:text-[#a1a1aa] hover:text-black dark:hover:text-white bg-white dark:bg-[#18181b] hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/15 rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -518,9 +516,9 @@ export const DatasetListPage: React.FC = () => {
                   disabled={
                     confirmDeleteInput.trim() !== deletingDataset.name || deleteMutation.isPending
                   }
-                  className="px-4 py-1.5 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-xs"
+                  className="px-4 py-1.5 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-xs cursor-pointer"
                 >
-                  {deleteMutation.isPending ? 'Deleting...' : 'Delete Dataset'}
+                  {deleteMutation.isPending ? 'Deleting...' : 'Permanently Delete'}
                 </button>
               </div>
             </form>

@@ -4,6 +4,8 @@ import { uploadDatasetFile } from '../api/imports';
 import { useAuth } from '../hooks/useAuth';
 import { ApiError } from '../api/apiFetch';
 import { Upload, ArrowLeft, AlertCircle, FileSpreadsheet, CheckCircle2 } from 'lucide-react';
+import { Logo } from '../components/common/Logo';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
@@ -106,32 +108,28 @@ export const UploadPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] text-black">
+    <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#09090b] text-black dark:text-white transition-colors">
       {/* Top Header */}
-      <header className="border-b border-black/10 bg-white sticky top-0 z-30 shadow-sm">
+      <header className="border-b border-black/10 dark:border-white/10 bg-white dark:bg-[#0f0f10] sticky top-0 z-30 shadow-sm transition-colors">
         <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/" className="font-bold text-2xl tracking-tight text-black flex items-center gap-3 hover:opacity-85 transition-opacity">
-              <span className="w-10 h-10 rounded-xl bg-[#0075de] text-white text-base font-extrabold flex items-center justify-center shadow-sm">
-                μ
-              </span>
-              Mutex
-            </Link>
-            <span className="text-sm font-semibold text-[#555] border-l-2 border-black/10 pl-4 py-0.5">
+            <Logo />
+            <span className="text-sm font-semibold text-[#555] dark:text-[#a1a1aa] border-l-2 border-black/10 dark:border-white/10 pl-4 py-0.5">
               Upload Dataset
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
             {user && (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-[#111] font-semibold hidden sm:inline">
+              <div className="flex items-center gap-3 border-l border-black/10 dark:border-white/10 pl-3">
+                <span className="text-sm text-[#111] dark:text-[#f4f4f5] font-semibold hidden sm:inline">
                   {user.displayName}
                 </span>
                 <button
                   onClick={() => logout()}
                   disabled={isLoggingOut}
-                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-black/10 font-semibold transition-colors cursor-pointer"
+                  className="text-xs text-[#666] dark:text-[#a1a1aa] hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-1.5 rounded-lg border border-black/10 dark:border-white/15 font-semibold transition-colors cursor-pointer"
                 >
                   {isLoggingOut ? 'Logging out...' : 'Sign out'}
                 </button>
@@ -146,30 +144,30 @@ export const UploadPage: React.FC = () => {
         <div className="mb-6">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-xs text-[#757575] hover:text-black transition-colors mb-3"
+            className="inline-flex items-center gap-1.5 text-xs text-[#757575] dark:text-[#a1a1aa] hover:text-black dark:hover:text-white transition-colors mb-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Datasets
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight text-black">Upload Sales Dataset</h1>
-          <p className="text-sm text-[#757575] mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-black dark:text-white">Upload Sales Dataset</h1>
+          <p className="text-sm text-[#757575] dark:text-[#a1a1aa] mt-1">
             Ingest a sales spreadsheet (CSV or XLSX). Mutex validates every row, highlights issues, and lets you review before confirming.
           </p>
         </div>
 
         {errorMessage && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 shrink-0 text-red-600 mt-0.5" />
+          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-red-800 dark:text-red-300 text-sm flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
             <div className="flex-1">
               <strong className="font-semibold">Upload failed:</strong> {errorMessage}
             </div>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-black/8 shadow-xs p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-[#0f0f10] rounded-xl border border-black/8 dark:border-white/10 shadow-xs p-6 space-y-6">
           {/* Dataset Name */}
           <div>
-            <label htmlFor="dataset-name" className="block text-xs font-semibold text-[#37352f] uppercase tracking-wider mb-1.5">
+            <label htmlFor="dataset-name" className="block text-xs font-semibold text-[#37352f] dark:text-[#e4e4e7] uppercase tracking-wider mb-1.5">
               Dataset Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -181,14 +179,14 @@ export const UploadPage: React.FC = () => {
               disabled={isUploading}
               maxLength={100}
               required
-              className="w-full px-3.5 py-2.5 rounded-lg border border-black/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] transition-all bg-[#faf9f8]"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-black/15 dark:border-white/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] transition-all bg-[#faf9f8] dark:bg-[#18181b] text-black dark:text-white"
             />
-            <p className="text-xs text-[#757575] mt-1">Between 1 and 100 characters. Unique to your account.</p>
+            <p className="text-xs text-[#757575] dark:text-[#a1a1aa] mt-1">Between 1 and 100 characters. Unique to your account.</p>
           </div>
 
           {/* File Upload Drop Area */}
           <div>
-            <label className="block text-xs font-semibold text-[#37352f] uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-[#37352f] dark:text-[#e4e4e7] uppercase tracking-wider mb-1.5">
               Spreadsheet File (.CSV or .XLSX) <span className="text-red-500">*</span>
             </label>
             <div
@@ -210,10 +208,10 @@ export const UploadPage: React.FC = () => {
               }}
               className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
                 isDragOver
-                  ? 'border-[#0075de] bg-[#0075de]/10 ring-4 ring-[#0075de]/20'
+                  ? 'border-[#0075de] bg-[#0075de]/10 dark:bg-[#0075de]/20 ring-4 ring-[#0075de]/20'
                   : file
-                  ? 'border-emerald-400 bg-emerald-50/30'
-                  : 'border-black/15 bg-[#faf9f8] hover:border-black/30'
+                  ? 'border-emerald-400 dark:border-emerald-600 bg-emerald-50/30 dark:bg-emerald-950/20'
+                  : 'border-black/15 dark:border-white/15 bg-[#faf9f8] dark:bg-[#141416] hover:border-black/30 dark:hover:border-white/30'
               }`}
             >
               <input
@@ -227,9 +225,9 @@ export const UploadPage: React.FC = () => {
               <label htmlFor="file-input" className="cursor-pointer flex flex-col items-center">
                 {file ? (
                   <>
-                    <CheckCircle2 className="w-10 h-10 text-emerald-600 mb-2" />
-                    <span className="text-sm font-semibold text-black">{file.name}</span>
-                    <span className="text-xs text-[#757575] mt-1">
+                    <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mb-2" />
+                    <span className="text-sm font-semibold text-black dark:text-white">{file.name}</span>
+                    <span className="text-xs text-[#757575] dark:text-[#a1a1aa] mt-1">
                       {(file.size / 1024).toFixed(1)} KB · Click or drag to change file
                     </span>
                   </>
@@ -238,10 +236,10 @@ export const UploadPage: React.FC = () => {
                     <div className="w-12 h-12 rounded-full bg-[#0075de]/10 flex items-center justify-center text-[#0075de] mb-3">
                       <FileSpreadsheet className="w-6 h-6" />
                     </div>
-                    <span className="text-sm font-semibold text-black">
+                    <span className="text-sm font-semibold text-black dark:text-white">
                       {isDragOver ? 'Drop file to upload' : 'Click to browse or drag and drop'}
                     </span>
-                    <span className="text-xs text-[#757575] mt-1">Supports UTF-8 CSV or Excel XLSX (max 10 MB)</span>
+                    <span className="text-xs text-[#757575] dark:text-[#a1a1aa] mt-1">Supports UTF-8 CSV or Excel XLSX (max 10 MB)</span>
                   </>
                 )}
               </label>
@@ -249,10 +247,10 @@ export const UploadPage: React.FC = () => {
           </div>
 
           {/* Configuration Options Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2 border-t border-black/8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2 border-t border-black/8 dark:border-white/10">
             {/* Date Format */}
             <div>
-              <label htmlFor="date-format" className="block text-xs font-semibold text-[#37352f] uppercase tracking-wider mb-1.5">
+              <label htmlFor="date-format" className="block text-xs font-semibold text-[#37352f] dark:text-[#e4e4e7] uppercase tracking-wider mb-1.5">
                 Date Format in File
               </label>
               <select
@@ -260,7 +258,7 @@ export const UploadPage: React.FC = () => {
                 value={dateFormat}
                 disabled={isUploading}
                 onChange={(e) => setDateFormat(e.target.value as 'ISO' | 'DMY' | 'MDY')}
-                className="w-full px-3 py-2 rounded-lg border border-black/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-[#faf9f8]"
+                className="w-full px-3 py-2 rounded-lg border border-black/15 dark:border-white/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-[#faf9f8] dark:bg-[#18181b] text-black dark:text-white"
               >
                 <option value="ISO">ISO (YYYY-MM-DD)</option>
                 <option value="DMY">DMY (DD/MM/YYYY)</option>
@@ -270,7 +268,7 @@ export const UploadPage: React.FC = () => {
 
             {/* Currency Code */}
             <div>
-              <label htmlFor="currency-code" className="block text-xs font-semibold text-[#37352f] uppercase tracking-wider mb-1.5">
+              <label htmlFor="currency-code" className="block text-xs font-semibold text-[#37352f] dark:text-[#e4e4e7] uppercase tracking-wider mb-1.5">
                 Currency
               </label>
               <input
@@ -281,14 +279,14 @@ export const UploadPage: React.FC = () => {
                 onChange={(e) => setCurrency(e.target.value.toUpperCase())}
                 maxLength={3}
                 placeholder="INR"
-                className="w-full px-3 py-2 rounded-lg border border-black/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-[#faf9f8]"
+                className="w-full px-3 py-2 rounded-lg border border-black/15 dark:border-white/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-[#faf9f8] dark:bg-[#18181b] text-black dark:text-white"
               />
-              <p className="text-xs text-[#757575] mt-1">ISO 4217 code (e.g. INR, USD)</p>
+              <p className="text-xs text-[#757575] dark:text-[#a1a1aa] mt-1">ISO 4217 code (e.g. INR, USD)</p>
             </div>
 
             {/* Ingestion Policy */}
             <div>
-              <label htmlFor="policy-select" className="block text-xs font-semibold text-[#37352f] uppercase tracking-wider mb-1.5">
+              <label htmlFor="policy-select" className="block text-xs font-semibold text-[#37352f] dark:text-[#e4e4e7] uppercase tracking-wider mb-1.5">
                 Import Policy
               </label>
               <select
@@ -296,7 +294,7 @@ export const UploadPage: React.FC = () => {
                 value={policy}
                 disabled={isUploading}
                 onChange={(e) => setPolicy(e.target.value as 'IMPORT_VALID_ONLY' | 'REJECT_FILE_ON_ANY_ERROR')}
-                className="w-full px-3 py-2 rounded-lg border border-black/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-[#faf9f8]"
+                className="w-full px-3 py-2 rounded-lg border border-black/15 dark:border-white/15 text-sm focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-[#faf9f8] dark:bg-[#18181b] text-black dark:text-white"
               >
                 <option value="IMPORT_VALID_ONLY">Import Valid Rows Only</option>
                 <option value="REJECT_FILE_ON_ANY_ERROR">Strict (Reject on Any Error)</option>
@@ -307,11 +305,11 @@ export const UploadPage: React.FC = () => {
           {/* Upload Progress Bar */}
           {uploadProgress !== null && (
             <div className="pt-2">
-              <div className="flex items-center justify-between text-xs font-medium text-[#37352f] mb-1.5">
+              <div className="flex items-center justify-between text-xs font-medium text-[#37352f] dark:text-[#e4e4e7] mb-1.5">
                 <span>{uploadProgress < 100 ? 'Uploading file...' : 'File received, starting server validation...'}</span>
                 <span>{uploadProgress}%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-black/10 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
                 <div
                   className="h-full bg-[#0075de] transition-all duration-300 rounded-full"
                   style={{ width: `${uploadProgress}%` }}
@@ -321,17 +319,17 @@ export const UploadPage: React.FC = () => {
           )}
 
           {/* Submit Action */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-black/8">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-black/8 dark:border-white/10">
             <Link
               to="/"
-              className="px-4 py-2 rounded-lg text-sm text-[#757575] hover:text-black hover:bg-black/5 transition-colors font-medium"
+              className="px-4 py-2 rounded-lg text-sm text-[#757575] dark:text-[#a1a1aa] hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors font-medium"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={isUploading || !file || !name.trim()}
-              className="px-5 py-2 rounded-lg bg-[#0075de] hover:bg-[#0060b8] text-white text-sm font-semibold shadow-xs disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2.5 rounded-lg bg-black text-white hover:bg-black/85 dark:bg-white dark:text-black dark:hover:bg-white/90 text-sm font-semibold shadow-xs disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center gap-2 cursor-pointer"
             >
               <Upload className="w-4 h-4" />
               {isUploading ? 'Uploading...' : 'Upload & Review'}

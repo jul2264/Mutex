@@ -5,6 +5,8 @@ import { getPreview, confirmImport, cancelImport } from '../api/imports';
 import { getDataset } from '../api/datasets';
 import { useAuth } from '../hooks/useAuth';
 import { ApiError } from '../api/apiFetch';
+import { Logo } from '../components/common/Logo';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 type TabStatus = 'ALL' | 'VALID' | 'INVALID' | 'DUPLICATE_CANDIDATE';
 
@@ -95,36 +97,33 @@ export const PreviewPage: React.FC = () => {
   const canConfirm = isStaged && counts.valid > 0 && !confirmMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] text-black">
+    <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#09090b] text-black dark:text-white transition-colors">
       {/* Header */}
-      <header className="border-b border-black/10 bg-white sticky top-0 z-30 shadow-sm">
+      <header className="border-b border-black/10 dark:border-white/10 bg-white dark:bg-[#0f0f10] sticky top-0 z-30 shadow-sm transition-colors">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/" className="font-bold text-2xl tracking-tight text-black flex items-center gap-3 hover:opacity-85 transition-opacity">
-              <span className="w-10 h-10 rounded-xl bg-[#0075de] text-white text-base font-extrabold flex items-center justify-center shadow-sm">
-                μ
-              </span>
-              Mutex
-            </Link>
-            <span className="text-sm font-semibold text-[#555] border-l-2 border-black/10 pl-4 py-0.5">
+            <Logo />
+            <span className="text-sm font-semibold text-[#555] dark:text-[#a1a1aa] border-l-2 border-black/10 dark:border-white/10 pl-4 py-0.5">
               Data Preview & Review
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#f6f5f4] border border-black/15 text-[#222]">
-              Dataset: <span className="font-bold text-black">{dataset?.name ?? 'Loading...'}</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#f6f5f4] dark:bg-[#18181b] border border-black/15 dark:border-white/15 text-[#222] dark:text-[#f4f4f5]">
+              Dataset: <span className="font-bold text-black dark:text-white">{dataset?.name ?? 'Loading...'}</span>
             </span>
 
+            <ThemeToggle />
+
             {user && (
-              <div className="flex items-center gap-3 border-l-2 border-black/10 pl-4">
-                <span className="text-sm text-[#111] font-semibold hidden sm:inline">
+              <div className="flex items-center gap-3 border-l-2 border-black/10 dark:border-white/10 pl-3">
+                <span className="text-sm text-[#111] dark:text-[#f4f4f5] font-semibold hidden sm:inline">
                   {user.displayName}
                 </span>
                 <button
                   onClick={() => logout()}
                   disabled={isLoggingOut}
-                  className="text-xs text-[#666] hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-black/10 font-semibold transition-colors cursor-pointer"
+                  className="text-xs text-[#666] dark:text-[#a1a1aa] hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 py-1.5 rounded-lg border border-black/10 dark:border-white/15 font-semibold transition-colors cursor-pointer"
                 >
                   {isLoggingOut ? 'Logging out...' : 'Sign out'}
                 </button>
