@@ -417,5 +417,128 @@ public class StagingRepository {
         jdbcTemplate.update("DELETE FROM import_row_issues WHERE import_job_id = ?", importJobId);
         jdbcTemplate.update("DELETE FROM import_staging_rows WHERE import_job_id = ?", importJobId);
     }
+
+    public java.time.LocalDate findLatestValidOrderDate(UUID importJobId) {
+        String sql = """
+                SELECT MAX(order_date)
+                FROM import_staging_rows
+                WHERE import_job_id = ? AND row_status = 'VALID' AND order_date IS NOT NULL
+                """;
+        java.sql.Date maxDate = jdbcTemplate.queryForObject(sql, java.sql.Date.class, importJobId);
+        return maxDate != null ? maxDate.toLocalDate() : null;
+    }
+
+    public List<StagingRowData> findInvalidStagingRows(UUID importJobId) {
+        String sql = """
+                SELECT id, source_row_number, row_status, raw_values,
+                       order_id, order_date, product_name, category, region,
+                       quantity, unit_price, unit_cost
+                FROM import_staging_rows
+                WHERE import_job_id = ? AND row_status = 'INVALID'
+                ORDER BY source_row_number ASC
+                """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Map<String, Object> rawMap = null;
+            String rawJson = rs.getString("raw_values");
+            if (rawJson != null && !rawJson.isBlank()) {
+                try {
+                    rawMap = objectMapper.readValue(rawJson, Map.class);
+                } catch (Exception ignored) {}
+            }
+
+            java.sql.Date d = rs.getDate("order_date");
+            java.time.LocalDate localDate = (d != null) ? d.toLocalDate() : null;
+
+            int qty = rs.getInt("quantity");
+            Integer quantity = rs.wasNull() ? null : qty;
+
+            return new StagingRowData(
+                    rs.getLong("id"),
+                    rs.getInt("source_row_number"),
+                    RowStatus.valueOf(rs.getString("row_status")),
+                    rawMap,
+                    rs.getString("order_id"),
+                    localDate,
+                    rs.getString("product_name"),
+                    rs.getString("category"),
+                    rs.getString("region"),
+                    quantity,
+                    rs.getBigDecimal("unit_price"),
+                    rs.getBigDecimal("unit_cost")
+            );
+        }, importJobId);
+    }
+
+    @Transactional
+    public void batchUpdateStagingRows(UUID importJobId, List<ParsedRow> rows) {
+        if (rows == null || rows.isEmpty()) {
+            return;
+        }
+
+        String sql = """
+                UPDATE import_staging_rows
+                SET row_status = ?,
+                    raw_values = ?::jsonb,
+                    order_id = ?,
+                    order_date = ?,
+                    product_name = ?,
+                    category = ?,
+                    region = ?,
+                    quantity = ?,
+                    unit_price = ?,
+                    unit_cost = ?,
+                    row_hash = ?
+                WHERE import_job_id = ? AND source_row_number = ?
+                """;
+
+        jdbcTemplate.batchUpdate(sql, rows, rows.size(), (PreparedStatement ps, ParsedRow row) -> {
+            ps.setString(1, row.status().name());
+            if (row.rawValues() != null && !row.rawValues().isEmpty()) {
+                try {
+                    ps.setString(2, objectMapper.writeValueAsString(row.rawValues()));
+                } catch (Exception e) {
+                    ps.setString(2, "{}");
+                }
+            } else {
+                ps.setNull(2, Types.VARCHAR);
+            }
+            ps.setString(3, row.orderId());
+            if (row.orderDate() != null) {
+                ps.setDate(4, Date.valueOf(row.orderDate()));
+            } else {
+                ps.setNull(4, Types.DATE);
+            }
+            ps.setString(5, row.productName());
+            ps.setString(6, row.category());
+            ps.setString(7, row.region());
+            if (row.quantity() != null) {
+                ps.setInt(8, row.quantity());
+            } else {
+                ps.setNull(8, Types.INTEGER);
+            }
+            ps.setBigDecimal(9, row.unitPrice());
+            ps.setBigDecimal(10, row.unitCost());
+            ps.setString(11, row.rowHash());
+            ps.setObject(12, importJobId);
+            ps.setInt(13, row.sourceRowNumber());
+        });
+    }
+
+    @Transactional
+    public void batchReplaceIssues(UUID importJobId, List<Integer> rowNumbers, List<RowIssue> newIssues) {
+        if (rowNumbers != null && !rowNumbers.isEmpty()) {
+            String inSql = String.join(",", Collections.nCopies(rowNumbers.size(), "?"));
+            String deleteSql = "DELETE FROM import_row_issues WHERE import_job_id = ? AND source_row_number IN (" + inSql + ")";
+            List<Object> params = new ArrayList<>();
+            params.add(importJobId);
+            params.addAll(rowNumbers);
+            jdbcTemplate.update(deleteSql, params.toArray());
+        }
+
+        if (newIssues != null && !newIssues.isEmpty()) {
+            saveIssues(importJobId, newIssues);
+        }
+    }
 }
 

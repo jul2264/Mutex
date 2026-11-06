@@ -162,6 +162,28 @@ export interface EditRowResponse {
   counts: PreviewCountsDto;
 }
 
+export interface BulkFixRequest {
+  negativePriceStrategy?: string;
+  decimalQuantityStrategy?: string;
+  zeroQuantityStrategy?: string;
+  dateFixStrategy?: string;
+  customDate?: string | null;
+  fillMissingProduct?: boolean;
+  productPlaceholder?: string;
+  fillMissingCategory?: boolean;
+  categoryPlaceholder?: string;
+  fillMissingRegion?: boolean;
+  regionPlaceholder?: string;
+}
+
+export interface BulkFixResponse {
+  totalProcessed: number;
+  repairedToValid: number;
+  remainingInvalid: number;
+  untouchedLargeQuantityCount: number;
+  counts: PreviewCountsDto;
+}
+
 export interface ConfirmImportResponse {
   datasetId: string;
   importJobId: string;

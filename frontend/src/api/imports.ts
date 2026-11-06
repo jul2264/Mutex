@@ -1,5 +1,7 @@
 import { apiFetch, ApiError, getOrFetchCsrfToken } from './apiFetch';
 import type {
+  BulkFixRequest,
+  BulkFixResponse,
   ConfirmImportRequest,
   ConfirmImportResponse,
   EditRowRequest,
@@ -120,6 +122,17 @@ export async function editRow(
 ): Promise<EditRowResponse> {
   return apiFetch<EditRowResponse>(`/api/datasets/${datasetId}/imports/${jobId}/rows/${rowNumber}`, {
     method: 'PATCH',
+    body: JSON.stringify(request),
+  });
+}
+
+export async function applyBulkFix(
+  datasetId: string,
+  jobId: string,
+  request: BulkFixRequest
+): Promise<BulkFixResponse> {
+  return apiFetch<BulkFixResponse>(`/api/datasets/${datasetId}/imports/${jobId}/bulk-fix`, {
+    method: 'POST',
     body: JSON.stringify(request),
   });
 }

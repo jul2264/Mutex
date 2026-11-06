@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getPreview, confirmImport, cancelImport, getImportHistory, editRow } from './imports';
+import { getPreview, confirmImport, cancelImport, getImportHistory, editRow, applyBulkFix } from './imports';
 
 describe('imports API client', () => {
   beforeEach(() => {
@@ -190,6 +190,52 @@ describe('imports API client', () => {
       expect.objectContaining({
         method: 'PATCH',
         body: JSON.stringify(editPayload),
+      })
+    );
+  });
+
+  it('applyBulkFix sends POST to /api/datasets/:id/imports/:jobId/bulk-fix', async () => {
+    const mockResponse = {
+      repairedToValid: 4,
+      remainingInvalid: 1,
+      duplicateCandidateCount: 1,
+      untouchedLargeQuantityCount: 1,
+      counts: {
+        total: 10,
+        valid: 8,
+        invalid: 1,
+        duplicateCandidate: 1,
+        warnings: 0,
+      },
+    };
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockResponse,
+    } as Response);
+
+    const bulkFixPayload = {
+      negativePriceStrategy: 'ABS_VALUE' as const,
+      decimalQuantityStrategy: 'ROUND_HALF_UP' as const,
+      zeroQuantityStrategy: 'SET_ONE' as const,
+      dateFixStrategy: 'LATEST_VALID' as const,
+      customDate: null,
+      fillMissingProduct: true,
+      productPlaceholder: 'Unspecified Product',
+      fillMissingCategory: true,
+      categoryPlaceholder: 'Uncategorized',
+      fillMissingRegion: true,
+      regionPlaceholder: 'Unassigned',
+    };
+
+    const result = await applyBulkFix('ds-100', 'job-1', bulkFixPayload);
+    expect(result).toEqual(mockResponse);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/imports/job-1/bulk-fix',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify(bulkFixPayload),
       })
     );
   });

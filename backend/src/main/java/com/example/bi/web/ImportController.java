@@ -5,6 +5,7 @@ import com.example.bi.service.dataset.DatasetService;
 import com.example.bi.service.ingestion.ImportCancelService;
 import com.example.bi.service.ingestion.ImportCommitService;
 import com.example.bi.service.ingestion.ImportJobService;
+import com.example.bi.service.ingestion.StagingBulkFixService;
 import com.example.bi.service.ingestion.StagingRowEditService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -29,19 +30,22 @@ public class ImportController {
     private final ImportCancelService importCancelService;
     private final DatasetService datasetService;
     private final StagingRowEditService stagingRowEditService;
+    private final StagingBulkFixService stagingBulkFixService;
 
     public ImportController(
             ImportJobService importJobService,
             ImportCommitService importCommitService,
             ImportCancelService importCancelService,
             DatasetService datasetService,
-            StagingRowEditService stagingRowEditService
+            StagingRowEditService stagingRowEditService,
+            StagingBulkFixService stagingBulkFixService
     ) {
         this.importJobService = importJobService;
         this.importCommitService = importCommitService;
         this.importCancelService = importCancelService;
         this.datasetService = datasetService;
         this.stagingRowEditService = stagingRowEditService;
+        this.stagingBulkFixService = stagingBulkFixService;
     }
 
     @GetMapping
@@ -76,6 +80,16 @@ public class ImportController {
             @RequestBody EditRowRequest request
     ) {
         EditRowResponse response = stagingRowEditService.editRow(datasetId, jobId, rowNumber, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{jobId}/bulk-fix")
+    public ResponseEntity<BulkFixResponse> bulkFixRows(
+            @PathVariable("datasetId") UUID datasetId,
+            @PathVariable("jobId") UUID jobId,
+            @RequestBody BulkFixRequest request
+    ) {
+        BulkFixResponse response = stagingBulkFixService.applyBulkFix(datasetId, jobId, request);
         return ResponseEntity.ok(response);
     }
 

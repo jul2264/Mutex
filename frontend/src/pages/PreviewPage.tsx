@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPreview, confirmImport, cancelImport, editRow } from '../api/imports';
+import { getPreview, confirmImport, cancelImport, editRow, applyBulkFix } from '../api/imports';
 import { getDataset } from '../api/datasets';
 import { useImportJob } from '../hooks/useImportJob';
 import { useAuth } from '../hooks/useAuth';
 import { ApiError } from '../api/apiFetch';
-import type { EditRowRequest, PreviewRowDto } from '../api/types';
+import type { EditRowRequest, BulkFixRequest, PreviewRowDto } from '../api/types';
 import { Logo } from '../components/common/Logo';
 import { ThemeToggle } from '../components/common/ThemeToggle';
-import { Loader2, AlertCircle, FileCheck, RefreshCw, Pencil, Check, X } from 'lucide-react';
+import { BulkFixModal } from '../components/BulkFixModal';
+import { Loader2, AlertCircle, FileCheck, RefreshCw, Pencil, Check, X, Sparkles } from 'lucide-react';
 
 type TabStatus = 'ALL' | 'VALID' | 'INVALID' | 'DUPLICATE_CANDIDATE';
 
@@ -26,6 +27,8 @@ export const PreviewPage: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const [includeDuplicates, setIncludeDuplicates] = useState<boolean>(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [isBulkFixOpen, setIsBulkFixOpen] = useState<boolean>(false);
+  const [bulkFixMessage, setBulkFixMessage] = useState<string | null>(null);
 
   const [editingRowNumber, setEditingRowNumber] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<{
@@ -183,6 +186,38 @@ export const PreviewPage: React.FC = () => {
     setActionError(null);
   };
 
+  // Bulk Fix Mutation
+  const bulkFixMutation = useMutation({
+    mutationFn: (request: BulkFixRequest) => {
+      const activeJobId = targetJobId || latestJob?.id;
+      if (!activeJobId) throw new Error('No import job found for bulk remediation');
+      return applyBulkFix(datasetId!, activeJobId, request);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['preview', datasetId] });
+      queryClient.invalidateQueries({ queryKey: ['dataset', datasetId] });
+      if (targetJobId) {
+        queryClient.invalidateQueries({ queryKey: ['importJob', datasetId, targetJobId] });
+      }
+      setIsBulkFixOpen(false);
+      let msg = `Repaired ${data.repairedToValid} row(s) to VALID!`;
+      if (data.untouchedLargeQuantityCount > 0) {
+        msg += ` ${data.untouchedLargeQuantityCount} row(s) exceeding 1,000,000 quantity kept untouched for manual review.`;
+      } else if (data.remainingInvalid > 0) {
+        msg += ` ${data.remainingInvalid} row(s) still require review.`;
+      }
+      setBulkFixMessage(msg);
+      setActiveTab('ALL');
+    },
+    onError: (err: unknown) => {
+      if (err instanceof ApiError) {
+        setActionError(err.detail || `Failed to apply bulk fix: ${err.code}`);
+      } else {
+        setActionError('Failed to apply bulk repairs. Please check settings and try again.');
+      }
+    },
+  });
+
   const counts = {
     total: jobStatus?.totalRows ?? preview?.counts?.total ?? latestJob?.totalRows ?? 0,
     valid: jobStatus?.validRows ?? preview?.counts?.valid ?? latestJob?.validRows ?? 0,
@@ -198,6 +233,11 @@ export const PreviewPage: React.FC = () => {
     counts.valid > 0 &&
     !confirmMutation.isPending &&
     !isParsing;
+
+  const latestValidDate =
+    preview?.content?.find((r) => r.status === 'VALID' && r.values?.orderDate)?.values?.orderDate ||
+    dataset?.maxOrderDate ||
+    null;
 
   return (
     <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#09090b] text-black dark:text-white transition-colors">
@@ -279,13 +319,24 @@ export const PreviewPage: React.FC = () => {
               )}
 
               {counts.invalid > 0 && targetJobId && (
-                <a
-                  href={`/api/datasets/${datasetId}/imports/${targetJobId}/errors.csv`}
-                  download="errors.csv"
-                  className="px-3 py-2 text-xs font-medium text-[#c92a2a] dark:text-red-400 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-900/60 rounded-lg transition-colors flex items-center gap-1.5"
-                >
-                  Download Error CSV ({counts.invalid})
-                </a>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsBulkFixOpen(true)}
+                    className="px-3 py-2 text-xs font-semibold text-[#0075de] dark:text-[#38bdf8] bg-[#0075de]/10 dark:bg-[#38bdf8]/15 hover:bg-[#0075de]/20 dark:hover:bg-[#38bdf8]/25 border border-[#0075de]/30 dark:border-[#38bdf8]/40 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Bulk Fix Issues ({counts.invalid})</span>
+                  </button>
+
+                  <a
+                    href={`/api/datasets/${datasetId}/imports/${targetJobId}/errors.csv`}
+                    download="errors.csv"
+                    className="px-3 py-2 text-xs font-medium text-[#c92a2a] dark:text-red-400 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-900/60 rounded-lg transition-colors flex items-center gap-1.5"
+                  >
+                    Download Error CSV ({counts.invalid})
+                  </a>
+                </>
               )}
 
               <button
@@ -320,6 +371,21 @@ export const PreviewPage: React.FC = () => {
             </div>
           )}
         </div>
+
+        {bulkFixMessage && (
+          <div
+            role="status"
+            className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>{bulkFixMessage}</span>
+            </div>
+            <button onClick={() => setBulkFixMessage(null)} className="font-bold ml-4 hover:opacity-75 cursor-pointer">
+              ✕
+            </button>
+          </div>
+        )}
 
         {actionError && (
           <div
@@ -769,6 +835,17 @@ export const PreviewPage: React.FC = () => {
           )}
         </div>
       </main>
+
+      {targetJobId && (
+        <BulkFixModal
+          isOpen={isBulkFixOpen}
+          onClose={() => setIsBulkFixOpen(false)}
+          onApply={(req) => bulkFixMutation.mutate(req)}
+          isPending={bulkFixMutation.isPending}
+          invalidCount={counts.invalid}
+          latestValidDate={latestValidDate}
+        />
+      )}
     </div>
   );
 };
