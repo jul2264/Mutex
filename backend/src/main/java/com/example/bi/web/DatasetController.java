@@ -83,12 +83,13 @@ public class DatasetController {
     @GetMapping("/{id}/preview")
     public ResponseEntity<PreviewResponse> getPreview(
             @PathVariable("id") UUID id,
+            @RequestParam(value = "jobId", required = false) UUID jobId,
             @RequestParam(value = "source", required = false) String source,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "50") int size
     ) {
-        PreviewResponse response = importPreviewService.getPreview(id, source, status, page, size);
+        PreviewResponse response = importPreviewService.getPreview(id, jobId, source, status, page, size);
         return ResponseEntity.ok(response);
     }
 }

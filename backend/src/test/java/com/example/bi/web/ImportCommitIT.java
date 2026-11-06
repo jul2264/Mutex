@@ -329,4 +329,33 @@ class ImportCommitIT {
         assertEquals(ImportJobStatus.VALIDATED, remainingJob.getStatus());
         assertEquals(1, stagingRepository.countStagingRows(job.getId(), null));
     }
+
+    @Test
+    void preview_whenJobIsParsing_resolvesToStagedAndReturnsRows() throws Exception {
+        Dataset dataset = createDataset("Parsing Dataset " + UUID.randomUUID());
+        ImportJob job = createJob(dataset, ImportPolicy.IMPORT_VALID_ONLY, ImportJobStatus.PARSING, 1, 0, 0);
+
+        List<ParsedRow> rows = List.of(
+                new ParsedRow(2, RowStatus.VALID, "ORD-1", LocalDate.of(2026, 1, 15), "Product A", "Electronics", "North", 10, new BigDecimal("500.00"), new BigDecimal("300.00"), "hash1", Collections.emptyMap(), Collections.emptyList())
+        );
+        stagingRepository.saveStagingRows(job.getId(), rows);
+
+        // Preview without source param must resolve to STAGED because job is in PARSING
+        mockMvc.perform(get("/api/datasets/{id}/preview", dataset.getId())
+                        .with(user(testUser.getEmailNormalized()).roles("ANALYST")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.source", is("STAGED")))
+                .andExpect(jsonPath("$.counts.total", is(1)))
+                .andExpect(jsonPath("$.counts.valid", is(1)))
+                .andExpect(jsonPath("$.content.length()", is(1)));
+
+        // Preview with specific jobId param
+        mockMvc.perform(get("/api/datasets/{id}/preview", dataset.getId())
+                        .param("jobId", job.getId().toString())
+                        .with(user(testUser.getEmailNormalized()).roles("ANALYST")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.source", is("STAGED")))
+                .andExpect(jsonPath("$.counts.total", is(1)))
+                .andExpect(jsonPath("$.content.length()", is(1)));
+    }
 }

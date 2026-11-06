@@ -9,6 +9,7 @@ import type {
 } from './types';
 
 export interface GetPreviewParams {
+  jobId?: string;
   source?: 'STAGED' | 'COMMITTED';
   status?: 'ALL' | 'VALID' | 'INVALID' | 'DUPLICATE_CANDIDATE';
   page?: number;
@@ -79,6 +80,7 @@ export async function getJobStatus(datasetId: string, jobId: string): Promise<Im
 
 export async function getPreview(datasetId: string, params: GetPreviewParams = {}): Promise<PreviewResponse> {
   const query = new URLSearchParams();
+  if (params.jobId) query.set('jobId', params.jobId);
   if (params.source) query.set('source', params.source);
   if (params.status) query.set('status', params.status);
   if (params.page !== undefined) query.set('page', params.page.toString());

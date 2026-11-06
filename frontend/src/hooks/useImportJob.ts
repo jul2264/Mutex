@@ -12,11 +12,12 @@ export function useImportJob(datasetId?: string, jobId?: string) {
       return getJobStatus(datasetId, jobId);
     },
     enabled: Boolean(datasetId && jobId),
+    staleTime: 0,
     refetchInterval: (query) => {
       const status = query.state.data?.status;
       if (!status || !TERMINAL_STATUSES.has(status)) {
-        // Poll every 1s while in PARSING
-        return 1000;
+        // Poll every 800ms while in PARSING
+        return 800;
       }
       return false; // Stop polling when terminal
     },

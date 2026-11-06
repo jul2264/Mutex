@@ -41,7 +41,7 @@ public class ImportPreviewService {
         this.salesRecordRepository = salesRecordRepository;
     }
 
-    public PreviewResponse getPreview(UUID datasetId, String sourceParam, String statusParam, int page, int size) {
+    public PreviewResponse getPreview(UUID datasetId, UUID jobId, String sourceParam, String statusParam, int page, int size) {
         Dataset dataset = datasetAccessService.requireOwned(datasetId);
         UUID userId = currentUserProvider.getCurrentUserId();
 
@@ -50,24 +50,40 @@ public class ImportPreviewService {
         int offset = pageIndex * pageSize;
 
         // Determine source
-        String source = resolveSource(datasetId, userId, sourceParam);
+        String source = resolveSource(datasetId, userId, jobId, sourceParam);
 
         if ("COMMITTED".equalsIgnoreCase(source)) {
             return getCommittedPreview(dataset, pageIndex, pageSize, offset);
         } else {
-            return getStagedPreview(datasetId, userId, statusParam, pageIndex, pageSize, offset);
+            return getStagedPreview(datasetId, userId, jobId, statusParam, pageIndex, pageSize, offset);
         }
     }
 
-    private String resolveSource(UUID datasetId, UUID userId, String sourceParam) {
+    public PreviewResponse getPreview(UUID datasetId, String sourceParam, String statusParam, int page, int size) {
+        return getPreview(datasetId, null, sourceParam, statusParam, page, size);
+    }
+
+    private String resolveSource(UUID datasetId, UUID userId, UUID jobId, String sourceParam) {
         if (sourceParam != null && !sourceParam.isBlank()) {
             return sourceParam.toUpperCase(Locale.ROOT);
         }
 
-        // Default: STAGED when a VALIDATED job exists, otherwise COMMITTED
+        if (jobId != null) {
+            Optional<ImportJob> jobOpt = importJobRepository.findByIdAndDatasetIdAndOwnerId(jobId, datasetId, userId);
+            if (jobOpt.isPresent()) {
+                ImportJob job = jobOpt.get();
+                if (job.getStatus() == ImportJobStatus.PARSING || job.getStatus() == ImportJobStatus.VALIDATED) {
+                    return "STAGED";
+                } else if (job.getStatus() == ImportJobStatus.COMPLETED) {
+                    return "COMMITTED";
+                }
+            }
+        }
+
+        // Default: STAGED when a VALIDATED or PARSING job exists, otherwise COMMITTED
         List<ImportJob> activeJobs = importJobRepository.findByDatasetIdAndStatusIn(
                 datasetId,
-                List.of(ImportJobStatus.VALIDATED)
+                List.of(ImportJobStatus.PARSING, ImportJobStatus.VALIDATED)
         );
         return (!activeJobs.isEmpty()) ? "STAGED" : "COMMITTED";
     }
@@ -117,23 +133,37 @@ public class ImportPreviewService {
     private PreviewResponse getStagedPreview(
             UUID datasetId,
             UUID userId,
+            UUID jobId,
             String statusParam,
             int page,
             int size,
             int offset
     ) {
-        // Find latest active or validated job
-        Optional<ImportJob> latestJobOpt = importJobRepository.findLatestByDatasetIdAndOwnerId(datasetId, userId);
-        if (latestJobOpt.isEmpty()) {
+        ImportJob job = null;
+        if (jobId != null) {
+            job = importJobRepository.findByIdAndDatasetIdAndOwnerId(jobId, datasetId, userId).orElse(null);
+        }
+        if (job == null) {
+            List<ImportJob> activeJobs = importJobRepository.findByDatasetIdAndStatusIn(
+                    datasetId,
+                    List.of(ImportJobStatus.PARSING, ImportJobStatus.VALIDATED)
+            );
+            if (!activeJobs.isEmpty()) {
+                job = activeJobs.get(0);
+            } else {
+                job = importJobRepository.findLatestByDatasetIdAndOwnerId(datasetId, userId).orElse(null);
+            }
+        }
+
+        if (job == null) {
             PreviewCountsDto counts = new PreviewCountsDto(0, 0, 0, 0, 0);
             return new PreviewResponse("STAGED", counts, page, size, 0L, 0, Collections.emptyList());
         }
 
-        ImportJob job = latestJobOpt.get();
-        UUID jobId = job.getId();
+        UUID effectiveJobId = job.getId();
 
         // Calculate counts
-        StagingRepository.StagingCounts stagingCounts = stagingRepository.calculateCounts(jobId);
+        StagingRepository.StagingCounts stagingCounts = stagingRepository.calculateCounts(effectiveJobId);
         int totalStaged = stagingCounts.validRows() + stagingCounts.invalidRows() + stagingCounts.duplicateRows();
         PreviewCountsDto counts = new PreviewCountsDto(
                 totalStaged,
@@ -150,17 +180,17 @@ public class ImportPreviewService {
             } catch (IllegalArgumentException ignored) {}
         }
 
-        long totalElements = stagingRepository.countStagingRows(jobId, statusFilter);
+        long totalElements = stagingRepository.countStagingRows(effectiveJobId, statusFilter);
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
         List<StagingRepository.StagingRowData> stagedRows =
-                stagingRepository.findStagingRows(jobId, statusFilter, offset, size);
+                stagingRepository.findStagingRows(effectiveJobId, statusFilter, offset, size);
 
         List<Integer> rowNumbers = stagedRows.stream()
                 .map(StagingRepository.StagingRowData::sourceRowNumber)
                 .toList();
 
-        Map<Integer, List<RowIssue>> issuesMap = stagingRepository.findIssuesForRows(jobId, rowNumbers);
+        Map<Integer, List<RowIssue>> issuesMap = stagingRepository.findIssuesForRows(effectiveJobId, rowNumbers);
 
         List<PreviewRowDto> content = new ArrayList<>();
         for (StagingRepository.StagingRowData r : stagedRows) {
