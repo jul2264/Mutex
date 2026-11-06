@@ -174,6 +174,7 @@ export interface BulkFixRequest {
   categoryPlaceholder?: string;
   fillMissingRegion?: boolean;
   regionPlaceholder?: string;
+  capExcessiveQuantity?: boolean;
 }
 
 export interface BulkFixResponse {
@@ -181,6 +182,11 @@ export interface BulkFixResponse {
   repairedToValid: number;
   remainingInvalid: number;
   untouchedLargeQuantityCount: number;
+  counts: PreviewCountsDto;
+}
+
+export interface DiscardDuplicatesResponse {
+  discardedCount: number;
   counts: PreviewCountsDto;
 }
 

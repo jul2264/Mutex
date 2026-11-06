@@ -181,7 +181,8 @@ class BulkFixIT {
                 true,
                 "Uncategorized",
                 true,
-                "Unassigned"
+                "Unassigned",
+                false
         );
 
         mockMvc.perform(post("/api/datasets/{datasetId}/imports/{jobId}/bulk-fix", dataset.getId(), job.getId())
@@ -235,7 +236,7 @@ class BulkFixIT {
 
         BulkFixRequest request = new BulkFixRequest(
                 "ABS_VALUE", "ROUND_HALF_UP", "SET_ONE", "LATEST_VALID",
-                null, true, "Product", true, "Category", true, "Region"
+                null, true, "Product", true, "Category", true, "Region", false
         );
 
         mockMvc.perform(post("/api/datasets/{datasetId}/imports/{jobId}/bulk-fix", dataset.getId(), job.getId())
@@ -254,12 +255,100 @@ class BulkFixIT {
 
         BulkFixRequest request = new BulkFixRequest(
                 "ABS_VALUE", "ROUND_HALF_UP", "SET_ONE", "LATEST_VALID",
-                null, true, "Product", true, "Category", true, "Region"
+                null, true, "Product", true, "Category", true, "Region", false
         );
 
         mockMvc.perform(post("/api/datasets/{datasetId}/imports/{jobId}/bulk-fix", dataset.getId(), job.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
+                .with(csrf())
+                .with(user(otherUser.getEmailNormalized()).roles("ANALYST")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is("DATASET_NOT_FOUND")));
+    }
+
+    @Test
+    void bulkFix_withCapExcessiveQuantity_capsMillionAndRepairsToValid() throws Exception {
+        Dataset dataset = createDataset("BulkFix Capping " + UUID.randomUUID(), testUser);
+        ImportJob job = createJob(dataset, testUser, ImportJobStatus.VALIDATED, 0, 1, 0);
+
+        ParsedRow row = new ParsedRow(
+                2, RowStatus.INVALID,
+                "ORD-999", LocalDate.of(2026, 1, 15),
+                "Bulk Item", "General", "North",
+                1000001, new BigDecimal("10.00"), new BigDecimal("5.00"),
+                null,
+                Map.of("order_id", "ORD-999", "order_date", "2026-01-15", "product_name", "Bulk Item", "category", "General", "region", "North", "quantity", "1000001", "unit_price", "10.00", "unit_cost", "5.00"),
+                List.of(new RowIssue(2, "quantity", IssueSeverity.ERROR, "OUT_OF_RANGE", "exceeds limit", "1000001"))
+        );
+        stagingRepository.saveStagingRows(job.getId(), List.of(row));
+
+        BulkFixRequest request = new BulkFixRequest(
+                "ABS_VALUE", "ROUND_HALF_UP", "SET_ONE", "LATEST_VALID",
+                null, true, "Product", true, "Category", true, "Region", true
+        );
+
+        mockMvc.perform(post("/api/datasets/{datasetId}/imports/{jobId}/bulk-fix", dataset.getId(), job.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .with(csrf())
+                .with(user(testUser.getEmailNormalized()).roles("ANALYST")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.repairedToValid", is(1)))
+                .andExpect(jsonPath("$.remainingInvalid", is(0)))
+                .andExpect(jsonPath("$.untouchedLargeQuantityCount", is(0)))
+                .andExpect(jsonPath("$.counts.valid", is(1)))
+                .andExpect(jsonPath("$.counts.invalid", is(0)));
+
+        StagingRepository.StagingRowData repaired = stagingRepository.findStagingRow(job.getId(), 2).orElseThrow();
+        assertEquals(RowStatus.VALID, repaired.rowStatus());
+        assertEquals(1000000, repaired.quantity());
+    }
+
+    @Test
+    void discardDuplicates_removesDuplicateCandidatesAndReturnsCleanCounts() throws Exception {
+        Dataset dataset = createDataset("Discard Duplicates " + UUID.randomUUID(), testUser);
+        ImportJob job = createJob(dataset, testUser, ImportJobStatus.VALIDATED, 1, 0, 1);
+
+        ParsedRow validRow = new ParsedRow(
+                2, RowStatus.VALID,
+                "ORD-1", LocalDate.of(2026, 1, 15),
+                "Item A", "General", "North",
+                5, new BigDecimal("10.00"), new BigDecimal("5.00"),
+                "hash1", Collections.emptyMap(), Collections.emptyList()
+        );
+
+        ParsedRow dupRow = new ParsedRow(
+                3, RowStatus.DUPLICATE_CANDIDATE,
+                "ORD-1", LocalDate.of(2026, 1, 15),
+                "Item A", "General", "North",
+                5, new BigDecimal("10.00"), new BigDecimal("5.00"),
+                "hash1", Collections.emptyMap(),
+                List.of(new RowIssue(3, "order_id", IssueSeverity.WARNING, "DUPLICATE_IN_FILE", "Exact duplicate", null))
+        );
+
+        stagingRepository.saveStagingRows(job.getId(), List.of(validRow, dupRow));
+
+        mockMvc.perform(post("/api/datasets/{datasetId}/imports/{jobId}/discard-duplicates", dataset.getId(), job.getId())
+                .with(csrf())
+                .with(user(testUser.getEmailNormalized()).roles("ANALYST")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.discardedCount", is(1)))
+                .andExpect(jsonPath("$.counts.total", is(1)))
+                .andExpect(jsonPath("$.counts.valid", is(1)))
+                .andExpect(jsonPath("$.counts.duplicateCandidate", is(0)));
+
+        assertEquals(1, stagingRepository.calculateCounts(job.getId()).validRows());
+        assertEquals(0, stagingRepository.calculateCounts(job.getId()).duplicateRows());
+        assertEquals(Optional.empty(), stagingRepository.findStagingRow(job.getId(), 3));
+    }
+
+    @Test
+    void discardDuplicates_whenForeignDataset_returns404NotFound() throws Exception {
+        Dataset dataset = createDataset("Foreign Discard " + UUID.randomUUID(), testUser);
+        ImportJob job = createJob(dataset, testUser, ImportJobStatus.VALIDATED, 1, 0, 1);
+
+        mockMvc.perform(post("/api/datasets/{datasetId}/imports/{jobId}/discard-duplicates", dataset.getId(), job.getId())
                 .with(csrf())
                 .with(user(otherUser.getEmailNormalized()).roles("ANALYST")))
                 .andExpect(status().isNotFound())

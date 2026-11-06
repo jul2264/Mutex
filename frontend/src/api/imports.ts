@@ -2,6 +2,7 @@ import { apiFetch, ApiError, getOrFetchCsrfToken } from './apiFetch';
 import type {
   BulkFixRequest,
   BulkFixResponse,
+  DiscardDuplicatesResponse,
   ConfirmImportRequest,
   ConfirmImportResponse,
   EditRowRequest,
@@ -134,5 +135,14 @@ export async function applyBulkFix(
   return apiFetch<BulkFixResponse>(`/api/datasets/${datasetId}/imports/${jobId}/bulk-fix`, {
     method: 'POST',
     body: JSON.stringify(request),
+  });
+}
+
+export async function discardDuplicates(
+  datasetId: string,
+  jobId: string
+): Promise<DiscardDuplicatesResponse> {
+  return apiFetch<DiscardDuplicatesResponse>(`/api/datasets/${datasetId}/imports/${jobId}/discard-duplicates`, {
+    method: 'POST',
   });
 }

@@ -15,7 +15,8 @@ We implement **Approach 2: Guided Bulk-Fix Rules Wizard** (`POST /api/datasets/{
    - **Zero Quantities**: Fix to minimum valid quantity 1 (`SET_ONE`) or keep unchanged (`IGNORE`).
    - **Missing / Invalid Dates**: Resolve to the **latest valid date in the file** (`LATEST_VALID_DATE`, queried via `MAX(order_date)` on valid staging rows) or a user-chosen ISO date (`CUSTOM`).
    - **Missing Text Fields (`product_name`, `category`, `region`)**: Populate user-configurable placeholders (defaults: `"Unspecified Product"`, `"Uncategorized"`, `"Unassigned"`).
-   - **Out-of-Range Quantities (`> 1,000,000`)**: **Strictly protected and kept untouched** as `INVALID` for manual review to prevent accidental distortion of sales volumes and financial KPIs.
+   - **Out-of-Range Quantities (`> 1,000,000`)**: Can be automatically capped down to the maximum allowable limit of `1,000,000` via user opt-in (`capExcessiveQuantity`), or left untouched for manual review.
+   - **Duplicate Candidate Discarding (`Method 1`)**: An explicit endpoint `POST /api/datasets/{datasetId}/imports/{jobId}/discard-duplicates` allows users to permanently purge `DUPLICATE_CANDIDATE` rows and associated warnings from staging, immediately synchronizing tab and total row counts.
 
 2. **Backend Architecture & Integrity**:
    - `DatasetAccessService.requireOwned(datasetId)` is called before inspecting or modifying data, returning HTTP 404 for unowned datasets.

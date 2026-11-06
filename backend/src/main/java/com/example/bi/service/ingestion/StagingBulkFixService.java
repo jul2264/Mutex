@@ -5,6 +5,7 @@ import com.example.bi.domain.ImportJob;
 import com.example.bi.domain.ImportJobStatus;
 import com.example.bi.dto.BulkFixRequest;
 import com.example.bi.dto.BulkFixResponse;
+import com.example.bi.dto.DiscardDuplicatesResponse;
 import com.example.bi.dto.PreviewCountsDto;
 import com.example.bi.exception.DatasetNotFoundException;
 import com.example.bi.exception.ImportNotEditableException;
@@ -96,10 +97,15 @@ public class StagingBulkFixService {
 
             String rawQty = raw.get("quantity") != null ? raw.get("quantity").toString() : (row.quantity() != null ? row.quantity().toString() : null);
 
-            // Decision: Out-of-range quantities (> 1,000,000) are kept untouched for manual review
-            if (isLargeQuantity(rawQty, row.quantity())) {
-                untouchedLargeQuantityCount++;
-                continue;
+            // Out-of-range quantities (> 1,000,000): cap to 1,000,000 if enabled, else keep untouched for manual review
+            boolean isLarge = isLargeQuantity(rawQty, row.quantity());
+            if (isLarge) {
+                if (request.isCapExcessiveQuantity()) {
+                    rawQty = "1000000";
+                } else {
+                    untouchedLargeQuantityCount++;
+                    continue;
+                }
             }
 
             Map<String, String> cells = new HashMap<>();
@@ -234,6 +240,9 @@ public class StagingBulkFixService {
         try {
             if (clean.contains(".")) {
                 BigDecimal bd = new BigDecimal(clean);
+                if (request.isCapExcessiveQuantity() && bd.compareTo(new BigDecimal("1000000")) > 0) {
+                    return "1000000";
+                }
                 if (bd.stripTrailingZeros().scale() > 0) {
                     if (request.isDecimalQuantityTruncate()) {
                         return bd.setScale(0, RoundingMode.FLOOR).toPlainString();
@@ -243,6 +252,9 @@ public class StagingBulkFixService {
                 }
             } else {
                 long val = Long.parseLong(clean);
+                if (request.isCapExcessiveQuantity() && val > 1_000_000) {
+                    return "1000000";
+                }
                 if (val <= 0 && (request.isZeroQuantitySetOne() || request.zeroQuantityStrategy() == null || "DEFAULT".equalsIgnoreCase(request.zeroQuantityStrategy()))) {
                     return "1";
                 }
@@ -263,6 +275,48 @@ public class StagingBulkFixService {
             }
         }
         return original;
+    }
+
+    @Transactional
+    public DiscardDuplicatesResponse discardDuplicates(UUID datasetId, UUID jobId) {
+        // 1. Ownership check (throws 404 if not owned)
+        datasetAccessService.requireOwned(datasetId);
+        UUID userId = currentUserProvider.getCurrentUserId();
+
+        // 2. Lock job for update
+        ImportJob job = importJobRepository.findByIdAndDatasetIdAndOwnerIdForUpdate(jobId, datasetId, userId)
+                .orElseThrow(() -> new DatasetNotFoundException("Import job not found: " + jobId));
+
+        // 3. State guard: must be VALIDATED
+        if (job.getStatus() != ImportJobStatus.VALIDATED) {
+            throw new ImportNotEditableException(
+                    "Import job is in status " + job.getStatus() + " and duplicates cannot be discarded. Only allowed in VALIDATED status."
+            );
+        }
+
+        // 4. Delete duplicate candidates and associated issues
+        int discarded = stagingRepository.deleteDuplicateCandidates(jobId);
+
+        // 5. Re-calculate counts
+        StagingRepository.StagingCounts stagingCounts = stagingRepository.calculateCounts(jobId);
+        int totalStaged = stagingCounts.validRows() + stagingCounts.invalidRows() + stagingCounts.duplicateRows();
+
+        job.setTotalRows(totalStaged);
+        job.setValidRows(stagingCounts.validRows());
+        job.setInvalidRows(stagingCounts.invalidRows());
+        job.setDuplicateRows(stagingCounts.duplicateRows());
+        job.setWarningCount(stagingCounts.warningCount());
+        importJobRepository.save(job);
+
+        PreviewCountsDto countsDto = new PreviewCountsDto(
+                totalStaged,
+                stagingCounts.validRows(),
+                stagingCounts.invalidRows(),
+                stagingCounts.duplicateRows(),
+                stagingCounts.warningCount()
+        );
+
+        return new DiscardDuplicatesResponse(discarded, countsDto);
     }
 }
 

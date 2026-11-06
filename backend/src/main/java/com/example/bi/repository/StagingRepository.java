@@ -139,6 +139,26 @@ public class StagingRepository {
         return duplicatesMarked;
     }
 
+    @Transactional
+    public int deleteDuplicateCandidates(UUID importJobId) {
+        String deleteIssuesSql = """
+                DELETE FROM import_row_issues
+                WHERE import_job_id = ?
+                  AND source_row_number IN (
+                      SELECT source_row_number
+                      FROM import_staging_rows
+                      WHERE import_job_id = ? AND row_status = 'DUPLICATE_CANDIDATE'
+                  )
+                """;
+        jdbcTemplate.update(deleteIssuesSql, importJobId, importJobId);
+
+        String deleteRowsSql = """
+                DELETE FROM import_staging_rows
+                WHERE import_job_id = ? AND row_status = 'DUPLICATE_CANDIDATE'
+                """;
+        return jdbcTemplate.update(deleteRowsSql, importJobId);
+    }
+
     public StagingCounts calculateCounts(UUID importJobId) {
         String statusSql = """
                 SELECT row_status, COUNT(*) as cnt

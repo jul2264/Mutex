@@ -34,6 +34,7 @@ export const BulkFixModal: React.FC<BulkFixModalProps> = ({
 
   const [fillRegion, setFillRegion] = useState(true);
   const [regionPlaceholder, setRegionPlaceholder] = useState('Unassigned');
+  const [capExcessiveQuantity, setCapExcessiveQuantity] = useState(true);
 
   if (!isOpen) return null;
 
@@ -51,6 +52,7 @@ export const BulkFixModal: React.FC<BulkFixModalProps> = ({
       categoryPlaceholder: categoryPlaceholder.trim() || 'Uncategorized',
       fillMissingRegion: fillRegion,
       regionPlaceholder: regionPlaceholder.trim() || 'Unassigned',
+      capExcessiveQuantity,
     };
     onApply(payload);
   };
@@ -328,11 +330,43 @@ export const BulkFixModal: React.FC<BulkFixModalProps> = ({
             </div>
           </div>
 
-          {/* Safety Notice: Out-of-Range Quantities */}
-          <div className="p-3.5 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
-            <ShieldAlert className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
-            <div className="text-[11px] leading-relaxed">
-              <strong>Data Quality Safeguard:</strong> Rows where quantity exceeds <strong>1,000,000</strong> are protected and will remain untouched as <code className="font-mono">INVALID</code> for your manual review to prevent accidental revenue distortion.
+          {/* Rule 5: 1,000,000 Quantity Cap */}
+          <div className="p-3.5 rounded-xl border border-black/8 dark:border-white/10 bg-[#fbfbfa] dark:bg-[#18181b]/50">
+            <label className="flex items-start gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={capExcessiveQuantity}
+                onChange={(e) => setCapExcessiveQuantity(e.target.checked)}
+                className="mt-0.5 rounded border-black/20 dark:border-white/20 text-[#0075de]"
+              />
+              <div className="space-y-0.5">
+                <span className="font-semibold text-black dark:text-white">Cap quantities exceeding 1,000,000</span>
+                <p className="text-[#666] dark:text-[#a1a1aa] text-[11px]">
+                  Automatically cap quantities greater than 1,000,000 down to the maximum allowed limit of 1,000,000 (e.g. 1,000,001 becomes 1,000,000).
+                </p>
+              </div>
+            </label>
+          </div>
+
+          {/* Safety / Status Notice: Out-of-Range Quantities */}
+          <div
+            className={`p-3.5 rounded-xl border text-[11px] leading-relaxed flex items-start gap-2.5 transition-colors ${
+              capExcessiveQuantity
+                ? 'border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300'
+                : 'border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300'
+            }`}
+          >
+            <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
+            <div>
+              {capExcessiveQuantity ? (
+                <span>
+                  <strong>1,000,000 Limit Cap Active:</strong> Rows exceeding 1,000,000 will be capped down to 1,000,000 to become <code className="font-mono">VALID</code>.
+                </span>
+              ) : (
+                <span>
+                  <strong>Manual Review Safeguard:</strong> Rows exceeding 1,000,000 will remain untouched as <code className="font-mono">INVALID</code> for your manual review.
+                </span>
+              )}
             </div>
           </div>
 

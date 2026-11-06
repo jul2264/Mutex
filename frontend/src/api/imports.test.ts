@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getPreview, confirmImport, cancelImport, getImportHistory, editRow, applyBulkFix } from './imports';
+import { getPreview, confirmImport, cancelImport, getImportHistory, editRow, applyBulkFix, discardDuplicates } from './imports';
 
 describe('imports API client', () => {
   beforeEach(() => {
@@ -237,6 +237,32 @@ describe('imports API client', () => {
         method: 'POST',
         body: JSON.stringify(bulkFixPayload),
       })
+    );
+  });
+
+  it('discardDuplicates sends POST to /api/datasets/:id/imports/:jobId/discard-duplicates', async () => {
+    const mockResponse = {
+      discardedCount: 2,
+      counts: {
+        total: 12,
+        valid: 12,
+        invalid: 0,
+        duplicateCandidate: 0,
+        warnings: 0,
+      },
+    };
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => mockResponse,
+    } as Response);
+
+    const result = await discardDuplicates('ds-100', 'job-1');
+    expect(result).toEqual(mockResponse);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      '/api/datasets/ds-100/imports/job-1/discard-duplicates',
+      expect.objectContaining({ method: 'POST' })
     );
   });
 });

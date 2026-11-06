@@ -11,8 +11,13 @@ public record BulkFixRequest(
         Boolean fillMissingCategory,
         String categoryPlaceholder,
         Boolean fillMissingRegion,
-        String regionPlaceholder
+        String regionPlaceholder,
+        Boolean capExcessiveQuantity
 ) {
+    public boolean isCapExcessiveQuantity() {
+        return capExcessiveQuantity == null || capExcessiveQuantity;
+    }
+
     public boolean isNegativePriceAbs() {
         return "ABS_VALUE".equalsIgnoreCase(negativePriceStrategy);
     }

@@ -93,6 +93,15 @@ public class ImportController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/{jobId}/discard-duplicates")
+    public ResponseEntity<DiscardDuplicatesResponse> discardDuplicates(
+            @PathVariable("datasetId") UUID datasetId,
+            @PathVariable("jobId") UUID jobId
+    ) {
+        DiscardDuplicatesResponse response = stagingBulkFixService.discardDuplicates(datasetId, jobId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/{jobId}/cancel")
     public ResponseEntity<Void> cancelImport(
             @PathVariable("datasetId") UUID datasetId,

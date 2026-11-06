@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPreview, confirmImport, cancelImport, editRow, applyBulkFix } from '../api/imports';
+import { getPreview, confirmImport, cancelImport, editRow, applyBulkFix, discardDuplicates } from '../api/imports';
 import { getDataset } from '../api/datasets';
 import { useImportJob } from '../hooks/useImportJob';
 import { useAuth } from '../hooks/useAuth';
@@ -10,7 +10,7 @@ import type { EditRowRequest, BulkFixRequest, PreviewRowDto } from '../api/types
 import { Logo } from '../components/common/Logo';
 import { ThemeToggle } from '../components/common/ThemeToggle';
 import { BulkFixModal } from '../components/BulkFixModal';
-import { Loader2, AlertCircle, FileCheck, RefreshCw, Pencil, Check, X, Sparkles } from 'lucide-react';
+import { Loader2, AlertCircle, FileCheck, RefreshCw, Pencil, Check, X, Sparkles, Trash2 } from 'lucide-react';
 
 type TabStatus = 'ALL' | 'VALID' | 'INVALID' | 'DUPLICATE_CANDIDATE';
 
@@ -218,6 +218,33 @@ export const PreviewPage: React.FC = () => {
     },
   });
 
+  // Discard Duplicates Mutation
+  const discardDuplicatesMutation = useMutation({
+    mutationFn: () => {
+      const activeJobId = targetJobId || latestJob?.id;
+      if (!activeJobId) throw new Error('No import job found for discarding duplicates');
+      return discardDuplicates(datasetId!, activeJobId);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['preview', datasetId] });
+      queryClient.invalidateQueries({ queryKey: ['dataset', datasetId] });
+      if (targetJobId) {
+        queryClient.invalidateQueries({ queryKey: ['importJob', datasetId, targetJobId] });
+      }
+      setBulkFixMessage(`Successfully discarded ${data.discardedCount} duplicate candidate row(s).`);
+      setIncludeDuplicates(false);
+      setActiveTab('ALL');
+      setPage(0);
+    },
+    onError: (err: unknown) => {
+      if (err instanceof ApiError) {
+        setActionError(err.detail || `Failed to discard duplicates: ${err.code}`);
+      } else {
+        setActionError('Failed to discard duplicate rows. Please try again.');
+      }
+    },
+  });
+
   const counts = {
     total: jobStatus?.totalRows ?? preview?.counts?.total ?? latestJob?.totalRows ?? 0,
     valid: jobStatus?.validRows ?? preview?.counts?.valid ?? latestJob?.validRows ?? 0,
@@ -307,15 +334,41 @@ export const PreviewPage: React.FC = () => {
           {isStaged && !isParsing && !isFailed && (
             <div className="flex flex-wrap items-center gap-3">
               {counts.duplicateCandidate > 0 && (
-                <label className="flex items-center gap-2 text-xs text-[#37352f] dark:text-[#e4e4e7] bg-white dark:bg-[#18181b] px-3 py-2 rounded-lg border border-black/10 dark:border-white/10 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={includeDuplicates}
-                    onChange={(e) => setIncludeDuplicates(e.target.checked)}
-                    className="rounded border-black/20 dark:border-white/20 text-[#0075de] focus:ring-[#0075de]"
-                  />
-                  <span>Include {counts.duplicateCandidate} duplicate(s)</span>
-                </label>
+                <>
+                  <label className="flex items-center gap-2 text-xs text-[#37352f] dark:text-[#e4e4e7] bg-white dark:bg-[#18181b] px-3 py-2 rounded-lg border border-black/10 dark:border-white/10 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={includeDuplicates}
+                      onChange={(e) => setIncludeDuplicates(e.target.checked)}
+                      className="rounded border-black/20 dark:border-white/20 text-[#0075de] focus:ring-[#0075de]"
+                    />
+                    <span>Include {counts.duplicateCandidate} duplicate(s)</span>
+                  </label>
+
+                  {targetJobId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Are you sure you want to discard ${counts.duplicateCandidate} duplicate candidate row(s)? This will permanently remove them from staging.`
+                          )
+                        ) {
+                          discardDuplicatesMutation.mutate();
+                        }
+                      }}
+                      disabled={discardDuplicatesMutation.isPending}
+                      className="px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-900/60 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      {discardDuplicatesMutation.isPending ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-3.5 h-3.5" />
+                      )}
+                      <span>Discard {counts.duplicateCandidate} Duplicate(s)</span>
+                    </button>
+                  )}
+                </>
               )}
 
               {counts.invalid > 0 && targetJobId && (
@@ -532,6 +585,30 @@ export const PreviewPage: React.FC = () => {
           ) : (
             /* Data Table View */
             <div className="overflow-x-auto">
+              {activeTab === 'DUPLICATE_CANDIDATE' && counts.duplicateCandidate > 0 && isStaged && targetJobId && (
+                <div className="p-3.5 mx-4 my-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="text-xs text-amber-800 dark:text-amber-300">
+                    <strong>Duplicate Candidate Rows:</strong> These rows share the exact same values as earlier rows in the file. By default they are excluded on commit, or you can purge them now.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to discard all ${counts.duplicateCandidate} duplicate rows?`)) {
+                        discardDuplicatesMutation.mutate();
+                      }
+                    }}
+                    disabled={discardDuplicatesMutation.isPending}
+                    className="px-3 py-1.5 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-lg transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer shadow-xs"
+                  >
+                    {discardDuplicatesMutation.isPending ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-3.5 h-3.5" />
+                    )}
+                    <span>Discard All {counts.duplicateCandidate} Duplicates</span>
+                  </button>
+                </div>
+              )}
               <table className="w-full text-left text-xs">
                 <thead className="bg-[#fcfbf9] dark:bg-[#18181b] border-b border-black/8 dark:border-white/10 text-[#757575] dark:text-[#a1a1aa] uppercase text-[10px] font-semibold tracking-wider">
                   <tr>
