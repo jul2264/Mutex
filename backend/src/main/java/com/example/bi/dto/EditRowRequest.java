@@ -10,3 +10,4 @@ public record EditRowRequest(
         String unitPrice,
         String unitCost
 ) {}
+

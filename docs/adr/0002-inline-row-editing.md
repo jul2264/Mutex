@@ -31,3 +31,4 @@ We introduce **Option A: Inline Row Editing** for staged rows in the `VALIDATED`
 - Full validation and security integrity are preserved on the backend: no unvalidated or malformed data can reach `sales_records`.
 - Tab counts (`All Rows`, `Valid`, `Invalid`, `Duplicates`) stay fully synchronized after every edit.
 - Zero schema migrations needed (`import_staging_rows` and `import_row_issues` tables already hold the necessary fields).
+
