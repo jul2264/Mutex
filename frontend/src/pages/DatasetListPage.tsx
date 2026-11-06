@@ -135,7 +135,7 @@ export const DatasetListPage: React.FC = () => {
   const datasets = data?.content ?? [];
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] text-black relative">
+    <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#09090b] text-black dark:text-white relative transition-colors">
       {/* Fullscreen Drag Overlay */}
       {isWindowDragging && (
         <div

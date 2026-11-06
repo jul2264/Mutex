@@ -14,6 +14,42 @@ body {
 
 html.dark,
 html.dark body {
-  background-color: #09090b;
+  background-color: #09090b !important;
+  color: #ffffff !important;
+}
+
+/* Comprehensive Dark Mode Fallback and Utility Mapping */
+html.dark .bg-\[\#f6f5f4\] {
+  background-color: #09090b !important;
+}
+
+html.dark .bg-\[\#faf9f8\] {
+  background-color: #141416 !important;
+}
+
+html.dark .bg-\[\#fcfbf9\] {
+  background-color: #141416 !important;
+}
+
+html.dark .text-black {
   color: #ffffff;
+}
+
+html.dark .text-\[\#37352f\] {
+  color: #f4f4f5;
+}
+
+html.dark .text-\[\#555\],
+html.dark .text-\[\#444\],
+html.dark .text-\[\#666\],
+html.dark .text-\[\#757575\] {
+  color: #a1a1aa;
+}
+
+html.dark .border-black\/8,
+html.dark .border-black\/10,
+html.dark .border-black\/12,
+html.dark .border-black\/15,
+html.dark .border-black\/20 {
+  border-color: rgba(255, 255, 255, 0.12);
 }

@@ -12,10 +12,10 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f6f5f4] flex items-center justify-center">
+      <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#09090b] text-black dark:text-white flex items-center justify-center transition-colors">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-full border-2 border-black/10 border-t-black animate-spin" />
-          <span className="text-xs text-[#757575]">Authenticating...</span>
+          <div className="w-8 h-8 rounded-full border-2 border-black/10 dark:border-white/10 border-t-black dark:border-t-white animate-spin" />
+          <span className="text-xs text-[#757575] dark:text-[#a1a1aa]">Authenticating...</span>
         </div>
       </div>
     );
