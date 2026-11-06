@@ -36,3 +36,4 @@ We implement **Approach 2: Guided Bulk-Fix Rules Wizard** (`POST /api/datasets/{
 - Business users can remediate entire spreadsheets in seconds without losing oversight or control over data transformations.
 - Financial integrity is preserved: arithmetic on money is never done as float, strict bounds are enforced, and huge quantities remain flagged for human review.
 - Set-based duplicate detection ensures no repaired row can bypass duplicate candidate detection.
+

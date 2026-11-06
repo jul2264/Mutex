@@ -7,3 +7,4 @@ public record BulkFixResponse(
         int untouchedLargeQuantityCount,
         PreviewCountsDto counts
 ) {}
+
