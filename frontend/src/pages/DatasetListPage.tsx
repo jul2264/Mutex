@@ -479,7 +479,15 @@ export const DatasetListPage: React.FC = () => {
               This action cannot be undone. All sales records, staging data, and import history will be permanently deleted.
             </p>
             <p className="text-xs text-[#37352f] dark:text-[#e4e4e7] mb-2 font-medium">
-              Please type <strong className="text-black dark:text-white select-all bg-black/5 dark:bg-white/10 px-1 py-0.5 rounded font-mono">{deletingDataset.name}</strong> to confirm:
+              Please type{' '}
+              <strong
+                onClick={() => setConfirmDeleteInput(deletingDataset.name)}
+                title="Click to auto-fill name"
+                className="text-black dark:text-white select-all bg-black/5 dark:bg-white/10 px-1.5 py-0.5 rounded font-mono whitespace-pre cursor-pointer hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
+              >
+                {deletingDataset.name}
+              </strong>{' '}
+              to confirm:
             </p>
 
             {dialogError && (
