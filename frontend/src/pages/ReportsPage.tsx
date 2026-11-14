@@ -86,26 +86,26 @@ export const ReportsPage: React.FC = () => {
         <div className="mb-6">
           <Link
             to={datasetId ? `/datasets/${datasetId}/analytics?${searchParams.toString()}` : '/'}
-            className="inline-flex items-center gap-1.5 text-xs text-[#757575] hover:text-black transition-colors mb-3"
+            className="inline-flex items-center gap-1.5 text-xs text-[#757575] dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors mb-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Analytics Dashboard
           </Link>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-black">
+              <h1 className="text-2xl font-bold tracking-tight text-black dark:text-white">
                 Export Verified Data &amp; Reports
               </h1>
-              <p className="text-sm text-[#757575] mt-1">
+              <p className="text-sm text-[#757575] dark:text-zinc-400 mt-1">
                 Stream row-level transaction records or download full multi-sheet analytical workbooks.
               </p>
             </div>
             {datasetId && (
               <Link
                 to={`/datasets/${datasetId}/analytics?${searchParams.toString()}`}
-                className="px-3.5 py-2 rounded-lg border border-black/10 text-xs font-semibold text-[#37352f] hover:bg-black/5 flex items-center gap-1.5 shrink-0 self-start sm:self-auto transition-colors"
+                className="px-3.5 py-2 rounded-lg border border-black/10 dark:border-white/15 bg-white dark:bg-[#18181b] text-xs font-semibold text-[#37352f] dark:text-zinc-300 hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1.5 shrink-0 self-start sm:self-auto transition-colors"
               >
-                <BarChart3 className="w-4 h-4 text-[#0075de]" />
+                <BarChart3 className="w-4 h-4 text-[#0075de] dark:text-[#38bdf8]" />
                 <span>View Dashboard</span>
               </Link>
             )}

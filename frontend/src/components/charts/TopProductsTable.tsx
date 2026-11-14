@@ -28,49 +28,49 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({
 
   if (!products || products.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-black/8 shadow-xs p-6 h-80 flex flex-col items-center justify-center text-center">
-        <Trophy className="w-8 h-8 text-[#757575] mb-2" />
-        <span className="text-sm font-semibold text-black">No products found</span>
-        <span className="text-xs text-[#757575] mt-1">Adjust filters or search term to see top products.</span>
+      <div className="bg-white dark:bg-[#121214] rounded-xl border border-black/8 dark:border-white/10 shadow-xs p-6 h-80 flex flex-col items-center justify-center text-center">
+        <Trophy className="w-8 h-8 text-[#757575] dark:text-zinc-500 mb-2" />
+        <span className="text-sm font-semibold text-black dark:text-white">No products found</span>
+        <span className="text-xs text-[#757575] dark:text-zinc-400 mt-1">Adjust filters or search term to see top products.</span>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl border border-black/8 shadow-xs p-6">
+    <div className="bg-white dark:bg-[#121214] rounded-xl border border-black/8 dark:border-white/10 shadow-xs p-6">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-base font-bold text-black flex items-center gap-2">
+          <h2 className="text-base font-bold text-black dark:text-white flex items-center gap-2">
             <Trophy className="w-4 h-4 text-amber-500" /> Top Products
           </h2>
-          <p className="text-xs text-[#757575] mt-0.5">
+          <p className="text-xs text-[#757575] dark:text-zinc-400 mt-0.5">
             Ranked products showing dual revenue and gross profit ranking.
           </p>
         </div>
 
         {/* RankBy Switcher */}
-        <div className="inline-flex rounded-lg border border-black/10 p-0.5 bg-[#f6f5f4] text-xs font-medium">
+        <div className="inline-flex rounded-lg border border-black/10 dark:border-white/15 p-0.5 bg-[#f6f5f4] dark:bg-[#18181b] text-xs font-medium">
           <button
             type="button"
             onClick={() => onRankByChange('REVENUE')}
-            className={`px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 cursor-pointer ${
               rankBy === 'REVENUE'
-                ? 'bg-white shadow-2xs font-semibold text-black'
-                : 'text-[#757575] hover:text-black'
+                ? 'bg-white dark:bg-[#27272a] shadow-2xs font-semibold text-black dark:text-white'
+                : 'text-[#757575] dark:text-zinc-400 hover:text-black dark:hover:text-white'
             }`}
           >
-            <ArrowDownUp className="w-3 h-3 text-[#0075de]" /> Rank by Revenue
+            <ArrowDownUp className="w-3 h-3 text-[#0075de] dark:text-[#38bdf8]" /> Rank by Revenue
           </button>
           <button
             type="button"
             onClick={() => onRankByChange('PROFIT')}
-            className={`px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 cursor-pointer ${
               rankBy === 'PROFIT'
-                ? 'bg-white shadow-2xs font-semibold text-black'
-                : 'text-[#757575] hover:text-black'
+                ? 'bg-white dark:bg-[#27272a] shadow-2xs font-semibold text-black dark:text-white'
+                : 'text-[#757575] dark:text-zinc-400 hover:text-black dark:hover:text-white'
             }`}
           >
-            <ArrowDownUp className="w-3 h-3 text-emerald-600" /> Rank by Profit
+            <ArrowDownUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Rank by Profit
           </button>
         </div>
       </div>
@@ -78,7 +78,7 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs" aria-label="Top Products Table">
           <thead>
-            <tr className="bg-[#faf9f8] border-b border-black/8 text-[#757575] font-semibold uppercase tracking-wider">
+            <tr className="bg-[#faf9f8] dark:bg-[#18181b] border-b border-black/8 dark:border-white/10 text-[#757575] dark:text-zinc-400 font-semibold uppercase tracking-wider">
               <th className="py-2.5 px-3">Product</th>
               <th className="py-2.5 px-3 text-center">Revenue Rank</th>
               <th className="py-2.5 px-3 text-center">Profit Rank</th>
@@ -88,7 +88,7 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({
               <th className="py-2.5 px-3 text-right">Units</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-black/5">
+          <tbody className="divide-y divide-black/5 dark:divide-white/10">
             {products.map((p) => {
               const rev = parseFloat(p.revenue) || 0;
               const profit = parseFloat(p.grossProfit) || 0;
@@ -96,14 +96,14 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({
               const rankDivergence = p.revenueRank !== p.profitRank;
 
               return (
-                <tr key={p.product} className="hover:bg-black/[0.02]">
-                  <td className="py-2.5 px-3 font-semibold text-black">{p.product}</td>
+                <tr key={p.product} className="hover:bg-black/[0.02] dark:hover:bg-white/[0.04]">
+                  <td className="py-2.5 px-3 font-semibold text-black dark:text-white">{p.product}</td>
                   <td className="py-2.5 px-3 text-center">
                     <span
                       className={`inline-block px-2 py-0.5 rounded text-[11px] font-mono font-semibold ${
                         p.revenueRank <= 3
-                          ? 'bg-[#0075de]/10 text-[#0075de]'
-                          : 'bg-black/5 text-[#555]'
+                          ? 'bg-[#0075de]/10 dark:bg-[#38bdf8]/15 text-[#0075de] dark:text-[#38bdf8]'
+                          : 'bg-black/5 dark:bg-white/10 text-[#555] dark:text-zinc-300'
                       }`}
                     >
                       #{p.revenueRank}
@@ -113,28 +113,28 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({
                     <span
                       className={`inline-block px-2 py-0.5 rounded text-[11px] font-mono font-semibold ${
                         p.profitRank <= 3
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : 'bg-black/5 text-[#555]'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50'
+                          : 'bg-black/5 dark:bg-white/10 text-[#555] dark:text-zinc-300'
                       }`}
                     >
                       #{p.profitRank}
                       {rankDivergence && (
-                        <span className="ml-1 text-[10px] text-[#757575]" title="Revenue and profit ranks diverge">
+                        <span className="ml-1 text-[10px] text-[#757575] dark:text-zinc-400" title="Revenue and profit ranks diverge">
                           *
                         </span>
                       )}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-right font-mono">{formatMoney(p.revenue, currency)}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-black dark:text-white">{formatMoney(p.revenue, currency)}</td>
                   <td className="py-2.5 px-3 text-right font-mono">
-                    <span className={profit < 0 ? 'text-red-600' : ''}>
+                    <span className={profit < 0 ? 'text-red-600 dark:text-red-400' : 'text-black dark:text-white'}>
                       {formatMoney(p.grossProfit, currency)}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-right font-mono">
+                  <td className="py-2.5 px-3 text-right font-mono text-black dark:text-white">
                     {margin !== '—' ? `${margin}%` : '—'}
                   </td>
-                  <td className="py-2.5 px-3 text-right font-mono">{p.unitsSold.toLocaleString()}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-black dark:text-white">{p.unitsSold.toLocaleString()}</td>
                 </tr>
               );
             })}

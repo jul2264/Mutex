@@ -54,21 +54,21 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
   }));
 
   return (
-    <div className="bg-white rounded-xl border border-black/8 shadow-xs p-6">
+    <div className="bg-white dark:bg-[#121214] rounded-xl border border-black/8 dark:border-white/10 shadow-xs p-6">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-base font-bold text-black">Categories</h2>
-          <p className="text-xs text-[#757575] mt-0.5">Performance breakdown by product category.</p>
+          <h2 className="text-base font-bold text-black dark:text-white">Categories</h2>
+          <p className="text-xs text-[#757575] dark:text-zinc-400 mt-0.5">Performance breakdown by product category.</p>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Metric Selector */}
-          <div className="inline-flex rounded-lg border border-black/10 p-0.5 bg-[#f6f5f4] text-xs font-medium">
+          <div className="inline-flex rounded-lg border border-black/10 dark:border-white/15 p-0.5 bg-[#f6f5f4] dark:bg-[#18181b] text-xs font-medium">
             <button
               type="button"
               onClick={() => setMetric('revenue')}
-              className={`px-2.5 py-1 rounded-md transition-colors ${
-                metric === 'revenue' ? 'bg-white shadow-2xs font-semibold text-black' : 'text-[#757575] hover:text-black'
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                metric === 'revenue' ? 'bg-white dark:bg-[#27272a] shadow-2xs font-semibold text-black dark:text-white' : 'text-[#757575] dark:text-zinc-400 hover:text-black dark:hover:text-white'
               }`}
             >
               Revenue
@@ -76,8 +76,8 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
             <button
               type="button"
               onClick={() => setMetric('grossProfit')}
-              className={`px-2.5 py-1 rounded-md transition-colors ${
-                metric === 'grossProfit' ? 'bg-white shadow-2xs font-semibold text-black' : 'text-[#757575] hover:text-black'
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                metric === 'grossProfit' ? 'bg-white dark:bg-[#27272a] shadow-2xs font-semibold text-black dark:text-white' : 'text-[#757575] dark:text-zinc-400 hover:text-black dark:hover:text-white'
               }`}
             >
               Profit
@@ -85,8 +85,8 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
             <button
               type="button"
               onClick={() => setMetric('unitsSold')}
-              className={`px-2.5 py-1 rounded-md transition-colors ${
-                metric === 'unitsSold' ? 'bg-white shadow-2xs font-semibold text-black' : 'text-[#757575] hover:text-black'
+              className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                metric === 'unitsSold' ? 'bg-white dark:bg-[#27272a] shadow-2xs font-semibold text-black dark:text-white' : 'text-[#757575] dark:text-zinc-400 hover:text-black dark:hover:text-white'
               }`}
             >
               Units
@@ -96,7 +96,7 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
           <button
             type="button"
             onClick={() => setViewAsTable(!viewAsTable)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/10 text-xs font-semibold text-[#37352f] hover:bg-black/5 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/10 dark:border-white/15 text-xs font-semibold text-[#37352f] dark:text-zinc-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
           >
             {viewAsTable ? <BarChart2 className="w-3.5 h-3.5" /> : <Table className="w-3.5 h-3.5" />}
             {viewAsTable ? 'Chart' : 'Table'}
@@ -108,7 +108,7 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs" aria-label="Category Sales Table">
             <thead>
-              <tr className="bg-[#faf9f8] border-b border-black/8 text-[#757575] font-semibold uppercase tracking-wider">
+              <tr className="bg-[#faf9f8] dark:bg-[#18181b] border-b border-black/8 dark:border-white/10 text-[#757575] dark:text-zinc-400 font-semibold uppercase tracking-wider">
                 <th className="py-2.5 px-3">Category</th>
                 <th className="py-2.5 px-3 text-right">Revenue</th>
                 <th className="py-2.5 px-3 text-right">Revenue Share</th>
@@ -117,21 +117,21 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
                 <th className="py-2.5 px-3 text-right">Units</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-black/5">
+            <tbody className="divide-y divide-black/5 dark:divide-white/10">
               {categories.map((c) => (
-                <tr key={c.name} className="hover:bg-black/[0.02]">
-                  <td className="py-2.5 px-3 font-semibold text-black">{c.name}</td>
-                  <td className="py-2.5 px-3 text-right font-mono">{formatMoney(c.revenue, currency)}</td>
-                  <td className="py-2.5 px-3 text-right font-mono text-[#757575]">{c.revenueSharePct}%</td>
+                <tr key={c.name} className="hover:bg-black/[0.02] dark:hover:bg-white/[0.04]">
+                  <td className="py-2.5 px-3 font-semibold text-black dark:text-white">{c.name}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-black dark:text-white">{formatMoney(c.revenue, currency)}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-[#757575] dark:text-zinc-400">{c.revenueSharePct}%</td>
                   <td className="py-2.5 px-3 text-right font-mono">
-                    <span className={parseFloat(c.grossProfit) < 0 ? 'text-red-600' : ''}>
+                    <span className={parseFloat(c.grossProfit) < 0 ? 'text-red-600 dark:text-red-400' : 'text-black dark:text-white'}>
                       {formatMoney(c.grossProfit, currency)}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-right font-mono">
+                  <td className="py-2.5 px-3 text-right font-mono text-black dark:text-white">
                     {c.grossMarginPct?.value ? formatPercent(c.grossMarginPct.value) : '—'}
                   </td>
-                  <td className="py-2.5 px-3 text-right font-mono">{c.unitsSold.toLocaleString()}</td>
+                  <td className="py-2.5 px-3 text-right font-mono text-black dark:text-white">{c.unitsSold.toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -141,11 +141,11 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
         <div className="h-64 w-full pt-2" aria-label="Category Breakdown Chart">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.06)" />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#757575' }} stroke="rgba(0,0,0,0.15)" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(128,128,128,0.15)" />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#888' }} stroke="rgba(128,128,128,0.25)" />
               <YAxis
-                tick={{ fontSize: 11, fill: '#757575' }}
-                stroke="rgba(0,0,0,0.15)"
+                tick={{ fontSize: 11, fill: '#888' }}
+                stroke="rgba(128,128,128,0.25)"
                 tickFormatter={(val) => (val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val)}
               />
               <Tooltip
@@ -153,21 +153,21 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({
                   if (active && payload && payload.length) {
                     const row = chartData.find((d) => d.name === label);
                     return (
-                      <div className="bg-white p-3 rounded-lg border border-black/15 shadow-md text-xs space-y-1">
-                        <div className="font-bold text-black pb-1 border-b border-black/10">{label}</div>
-                        <div className="text-[#0075de] font-medium flex justify-between gap-4">
+                      <div className="bg-white dark:bg-[#18181b] p-3 rounded-lg border border-black/15 dark:border-white/15 shadow-md text-xs space-y-1">
+                        <div className="font-bold text-black dark:text-white pb-1 border-b border-black/10 dark:border-white/10">{label}</div>
+                        <div className="text-[#0075de] dark:text-[#38bdf8] font-medium flex justify-between gap-4">
                           <span>Revenue:</span>
                           <span className="font-mono">{row ? formatMoney(String(row.revenue), currency) : '—'}</span>
                         </div>
-                        <div className="text-[#757575] flex justify-between gap-4">
+                        <div className="text-[#757575] dark:text-zinc-400 flex justify-between gap-4">
                           <span>Revenue Share:</span>
                           <span className="font-mono">{row ? `${row.sharePct}%` : '—'}</span>
                         </div>
-                        <div className="text-emerald-700 font-medium flex justify-between gap-4">
+                        <div className="text-emerald-700 dark:text-emerald-400 font-medium flex justify-between gap-4">
                           <span>Gross Profit:</span>
                           <span className="font-mono">{row ? formatMoney(String(row.grossProfit), currency) : '—'}</span>
                         </div>
-                        <div className="text-[#37352f] flex justify-between gap-4">
+                        <div className="text-[#37352f] dark:text-zinc-300 flex justify-between gap-4">
                           <span>Margin:</span>
                           <span className="font-mono">{row?.marginPct !== null && row?.marginPct !== undefined ? `${row.marginPct}%` : '—'}</span>
                         </div>

@@ -19,8 +19,16 @@ html.dark body {
 }
 
 /* Comprehensive Dark Mode Fallback and Utility Mapping */
+html.dark .bg-white {
+  background-color: #121214 !important;
+}
+
 html.dark .bg-\[\#f6f5f4\] {
   background-color: #09090b !important;
+}
+
+html.dark .bg-\[\#f0eeeb\] {
+  background-color: #18181b !important;
 }
 
 html.dark .bg-\[\#faf9f8\] {
@@ -35,7 +43,9 @@ html.dark .text-black {
   color: #ffffff;
 }
 
-html.dark .text-\[\#37352f\] {
+html.dark .text-\[\#37352f\],
+html.dark .text-\[\#222\],
+html.dark .text-\[\#111\] {
   color: #f4f4f5;
 }
 
@@ -46,10 +56,44 @@ html.dark .text-\[\#757575\] {
   color: #a1a1aa;
 }
 
+html.dark .border-black\/5,
+html.dark .border-black\/6,
 html.dark .border-black\/8,
 html.dark .border-black\/10,
 html.dark .border-black\/12,
 html.dark .border-black\/15,
 html.dark .border-black\/20 {
   border-color: rgba(255, 255, 255, 0.12);
+}
+
+html.dark .divide-black\/5 {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Recharts Dark Mode Support */
+html.dark .recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .recharts-cartesian-axis-line,
+html.dark .recharts-cartesian-axis-tick-line {
+  stroke: rgba(255, 255, 255, 0.15) !important;
+}
+
+html.dark .recharts-text,
+html.dark .recharts-cartesian-axis-tick text {
+  fill: #a1a1aa !important;
+}
+
+html.dark .recharts-legend-item-text {
+  color: #f4f4f5 !important;
+}
+
+html.dark .recharts-tooltip-cursor {
+  fill: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Date Input Calendar Icon Invert in Dark Mode */
+html.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }

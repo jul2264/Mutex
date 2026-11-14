@@ -71,30 +71,30 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
   }
 
   return (
-    <div className="bg-white border border-black/8 rounded-xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-[#121214] border border-black/8 dark:border-white/10 rounded-xl p-6 shadow-sm">
       <div className="mb-6">
-        <h2 className="text-base font-semibold text-black mb-1">
+        <h2 className="text-base font-semibold text-black dark:text-white mb-1">
           Export Configuration
         </h2>
-        <p className="text-xs text-[#757575]">
-          Generate and download reports for {datasetName ? <span className="font-medium text-black">"{datasetName}"</span> : 'this dataset'} adhering to active filters.
+        <p className="text-xs text-[#757575] dark:text-zinc-400">
+          Generate and download reports for {datasetName ? <span className="font-medium text-black dark:text-white">"{datasetName}"</span> : 'this dataset'} adhering to active filters.
         </p>
       </div>
 
       {/* Active Filter Scope Callout */}
-      <div className="mb-6 bg-[#f6f5f4] border border-black/5 rounded-lg p-3 text-xs">
-        <div className="flex items-center gap-1.5 font-medium text-black mb-1.5">
-          <Info className="w-3.5 h-3.5 text-[#0075de]" />
+      <div className="mb-6 bg-[#f6f5f4] dark:bg-[#18181b] border border-black/5 dark:border-white/10 rounded-lg p-3 text-xs">
+        <div className="flex items-center gap-1.5 font-medium text-black dark:text-white mb-1.5">
+          <Info className="w-3.5 h-3.5 text-[#0075de] dark:text-[#38bdf8]" />
           <span>Active Export Scope</span>
         </div>
         {filterDescriptions.length > 0 ? (
-          <ul className="space-y-1 text-[#37352f] pl-5 list-disc">
+          <ul className="space-y-1 text-[#37352f] dark:text-zinc-300 pl-5 list-disc">
             {filterDescriptions.map((desc, idx) => (
               <li key={idx}>{desc}</li>
             ))}
           </ul>
         ) : (
-          <p className="text-[#757575]">
+          <p className="text-[#757575] dark:text-zinc-400">
             No filters applied. Exporting all records in the dataset.
           </p>
         )}
@@ -103,25 +103,25 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
       <div className="space-y-5">
         {/* Type Selection */}
         <div>
-          <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">
+          <label className="block text-xs font-semibold text-black dark:text-white uppercase tracking-wider mb-2">
             Export Type
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => handleTypeChange('records')}
-              className={`flex items-start gap-3 p-3.5 rounded-lg border text-left transition-all ${
+              className={`flex items-start gap-3 p-3.5 rounded-lg border text-left transition-all cursor-pointer ${
                 type === 'records'
-                  ? 'border-[#0075de] bg-[#0075de]/5 ring-1 ring-[#0075de]'
-                  : 'border-black/10 hover:border-black/20 hover:bg-black/[0.02]'
+                  ? 'border-[#0075de] dark:border-[#38bdf8] bg-[#0075de]/5 dark:bg-[#38bdf8]/10 ring-1 ring-[#0075de] dark:ring-[#38bdf8]'
+                  : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
               }`}
             >
-              <FileText className={`w-5 h-5 mt-0.5 ${type === 'records' ? 'text-[#0075de]' : 'text-[#757575]'}`} />
+              <FileText className={`w-5 h-5 mt-0.5 ${type === 'records' ? 'text-[#0075de] dark:text-[#38bdf8]' : 'text-[#757575] dark:text-zinc-400'}`} />
               <div>
-                <span className="block text-xs font-semibold text-black">
+                <span className="block text-xs font-semibold text-black dark:text-white">
                   Raw Filtered Records
                 </span>
-                <span className="block text-[11px] text-[#757575] mt-0.5">
+                <span className="block text-[11px] text-[#757575] dark:text-zinc-400 mt-0.5">
                   Row-by-row transaction records including prices, costs, revenues, and profits.
                 </span>
               </div>
@@ -130,23 +130,23 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
             <button
               type="button"
               onClick={() => handleTypeChange('summary')}
-              className={`flex items-start gap-3 p-3.5 rounded-lg border text-left transition-all ${
+              className={`flex items-start gap-3 p-3.5 rounded-lg border text-left transition-all cursor-pointer ${
                 type === 'summary'
-                  ? 'border-[#0075de] bg-[#0075de]/5 ring-1 ring-[#0075de]'
-                  : 'border-black/10 hover:border-black/20 hover:bg-black/[0.02]'
+                  ? 'border-[#0075de] dark:border-[#38bdf8] bg-[#0075de]/5 dark:bg-[#38bdf8]/10 ring-1 ring-[#0075de] dark:ring-[#38bdf8]'
+                  : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
               }`}
             >
-              <FileSpreadsheet className={`w-5 h-5 mt-0.5 ${type === 'summary' ? 'text-[#0075de]' : 'text-[#757575]'}`} />
+              <FileSpreadsheet className={`w-5 h-5 mt-0.5 ${type === 'summary' ? 'text-[#0075de] dark:text-[#38bdf8]' : 'text-[#757575] dark:text-zinc-400'}`} />
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="block text-xs font-semibold text-black">
+                  <span className="block text-xs font-semibold text-black dark:text-white">
                     Summary Workbook
                   </span>
-                  <span className="text-[10px] font-medium bg-[#0075de]/10 text-[#0075de] px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] font-medium bg-[#0075de]/10 dark:bg-[#38bdf8]/15 text-[#0075de] dark:text-[#38bdf8] px-1.5 py-0.2 rounded">
                     Excel only
                   </span>
                 </div>
-                <span className="block text-[11px] text-[#757575] mt-0.5">
+                <span className="block text-[11px] text-[#757575] dark:text-zinc-400 mt-0.5">
                   5-sheet workbook: Summary, Trends, Categories, Regions, and Top Products.
                 </span>
               </div>
@@ -156,7 +156,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
 
         {/* Format Selection */}
         <div>
-          <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">
+          <label className="block text-xs font-semibold text-black dark:text-white uppercase tracking-wider mb-2">
             File Format
           </label>
           <div className="flex items-center gap-3">
@@ -166,10 +166,10 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
               onClick={() => handleFormatChange('csv')}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border text-xs font-medium transition-all ${
                 type === 'summary'
-                  ? 'opacity-40 cursor-not-allowed border-black/10 text-[#757575]'
+                  ? 'opacity-40 cursor-not-allowed border-black/10 dark:border-white/10 text-[#757575] dark:text-zinc-500'
                   : format === 'csv'
-                  ? 'border-[#0075de] bg-[#0075de]/5 text-[#0075de] font-semibold ring-1 ring-[#0075de]'
-                  : 'border-black/10 hover:border-black/20 hover:bg-black/[0.02] text-[#37352f]'
+                  ? 'border-[#0075de] dark:border-[#38bdf8] bg-[#0075de]/5 dark:bg-[#38bdf8]/10 text-[#0075de] dark:text-[#38bdf8] font-semibold ring-1 ring-[#0075de] dark:ring-[#38bdf8] cursor-pointer'
+                  : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-[#37352f] dark:text-zinc-300 cursor-pointer'
               }`}
             >
               <FileText className="w-4 h-4" />
@@ -179,10 +179,10 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
             <button
               type="button"
               onClick={() => handleFormatChange('xlsx')}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border text-xs font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
                 format === 'xlsx'
-                  ? 'border-[#0075de] bg-[#0075de]/5 text-[#0075de] font-semibold ring-1 ring-[#0075de]'
-                  : 'border-black/10 hover:border-black/20 hover:bg-black/[0.02] text-[#37352f]'
+                  ? 'border-[#0075de] dark:border-[#38bdf8] bg-[#0075de]/5 dark:bg-[#38bdf8]/10 text-[#0075de] dark:text-[#38bdf8] font-semibold ring-1 ring-[#0075de] dark:ring-[#38bdf8]'
+                  : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-[#37352f] dark:text-zinc-300'
               }`}
             >
               <FileSpreadsheet className="w-4 h-4" />
@@ -190,7 +190,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
             </button>
           </div>
           {type === 'summary' && (
-            <p className="text-[11px] text-[#757575] mt-1.5">
+            <p className="text-[11px] text-[#757575] dark:text-zinc-400 mt-1.5">
               Summary workbook requires Excel (.xlsx) format for multi-sheet layout.
             </p>
           )}
@@ -198,15 +198,15 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
 
         {/* Error Notification */}
         {error && (
-          <div className="p-3.5 rounded-lg border border-red-200 bg-red-50 text-red-900 text-xs flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-red-800">
+              <p className="font-semibold text-red-800 dark:text-red-300">
                 {errorCode === 'EXPORT_TOO_LARGE' ? 'Export Exceeds Size Limit' : 'Export Failed'}
               </p>
-              <p className="text-red-700 mt-0.5">{error}</p>
+              <p className="text-red-700 dark:text-red-400 mt-0.5">{error}</p>
               {errorCode === 'EXPORT_TOO_LARGE' && (
-                <p className="text-red-600 text-[11px] mt-1.5 font-medium">
+                <p className="text-red-600 dark:text-red-400 text-[11px] mt-1.5 font-medium">
                   Tip: Use the filter bar to select a narrower date range, specific categories, or regions.
                 </p>
               )}
@@ -216,8 +216,8 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ datasetId, datasetName
 
         {/* Success Notification */}
         {success && (
-          <div className="p-3.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs flex items-center gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <div className="p-3.5 rounded-lg border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 text-xs flex items-center gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>Export generated and download started!</span>
           </div>
         )}

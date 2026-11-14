@@ -74,22 +74,22 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   );
 
   return (
-    <div className="bg-white rounded-xl border border-black/10 shadow-sm p-5 mb-8 transition-opacity duration-200">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4 pb-4 border-b border-black/8">
+    <div className="bg-white dark:bg-[#121214] rounded-xl border border-black/10 dark:border-white/10 shadow-sm p-5 mb-8 transition-opacity duration-200">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4 pb-4 border-b border-black/8 dark:border-white/10">
         {/* Date presets & Custom Pickers */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="text-xs font-bold text-[#444] uppercase tracking-wider flex items-center gap-1.5 mr-1">
+          <span className="text-xs font-bold text-[#444] dark:text-zinc-300 uppercase tracking-wider flex items-center gap-1.5 mr-1">
             <Calendar className="w-4 h-4 text-[#0075de]" /> Date:
           </span>
 
-          <div className="inline-flex rounded-lg border border-black/15 p-1 bg-[#f0eeeb] text-xs font-medium">
+          <div className="inline-flex rounded-lg border border-black/15 dark:border-white/15 p-1 bg-[#f0eeeb] dark:bg-[#18181b] text-xs font-medium">
             <button
               type="button"
               onClick={() => handlePresetChange('all')}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                 selectedPreset === 'all'
-                  ? 'bg-white shadow-xs font-bold text-black border border-black/10'
-                  : 'text-[#555] hover:text-black hover:bg-black/5'
+                  ? 'bg-white dark:bg-[#27272a] shadow-xs font-bold text-black dark:text-white border border-black/10 dark:border-white/15'
+                  : 'text-[#555] dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
               All Time
@@ -99,8 +99,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               onClick={() => handlePresetChange('last30')}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                 selectedPreset === 'last30'
-                  ? 'bg-white shadow-xs font-bold text-black border border-black/10'
-                  : 'text-[#555] hover:text-black hover:bg-black/5'
+                  ? 'bg-white dark:bg-[#27272a] shadow-xs font-bold text-black dark:text-white border border-black/10 dark:border-white/15'
+                  : 'text-[#555] dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
               Last 30 Days
@@ -110,8 +110,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               onClick={() => handlePresetChange('lastMonth')}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                 selectedPreset === 'lastMonth'
-                  ? 'bg-white shadow-xs font-bold text-black border border-black/10'
-                  : 'text-[#555] hover:text-black hover:bg-black/5'
+                  ? 'bg-white dark:bg-[#27272a] shadow-xs font-bold text-black dark:text-white border border-black/10 dark:border-white/15'
+                  : 'text-[#555] dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
               Last Full Month
@@ -121,8 +121,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               onClick={() => handlePresetChange('custom')}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                 selectedPreset === 'custom'
-                  ? 'bg-white shadow-xs font-bold text-black border border-black/10'
-                  : 'text-[#555] hover:text-black hover:bg-black/5'
+                  ? 'bg-white dark:bg-[#27272a] shadow-xs font-bold text-black dark:text-white border border-black/10 dark:border-white/15'
+                  : 'text-[#555] dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
               Custom
@@ -135,14 +135,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 type="date"
                 value={filter.from || ''}
                 onChange={(e) => onChange({ from: e.target.value || undefined })}
-                className="px-2.5 py-1.5 rounded-md border border-black/20 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de]"
+                className="px-2.5 py-1.5 rounded-md border border-black/20 dark:border-white/20 bg-white dark:bg-[#18181b] text-black dark:text-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de]"
               />
-              <span className="text-[#555] font-semibold">to</span>
+              <span className="text-[#555] dark:text-zinc-400 font-semibold">to</span>
               <input
                 type="date"
                 value={filter.to || ''}
                 onChange={(e) => onChange({ to: e.target.value || undefined })}
-                className="px-2.5 py-1.5 rounded-md border border-black/20 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de]"
+                className="px-2.5 py-1.5 rounded-md border border-black/20 dark:border-white/20 bg-white dark:bg-[#18181b] text-black dark:text-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de]"
               />
             </div>
           )}
@@ -150,7 +150,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
         {/* Compare Toggle & Reset */}
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-xs font-semibold text-[#222] cursor-pointer bg-[#f6f5f4] hover:bg-[#eeecea] px-3 py-1.5 rounded-lg border border-black/10 transition-colors">
+          <label className="flex items-center gap-2 text-xs font-semibold text-[#222] dark:text-zinc-200 cursor-pointer bg-[#f6f5f4] dark:bg-[#18181b] hover:bg-[#eeecea] dark:hover:bg-[#27272a] px-3 py-1.5 rounded-lg border border-black/10 dark:border-white/15 transition-colors">
             <input
               type="checkbox"
               checked={filter.compare === 'PREVIOUS_PERIOD'}
@@ -167,7 +167,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             <button
               type="button"
               onClick={onReset}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#555] hover:text-red-700 px-2.5 py-1.5 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#555] dark:text-zinc-400 hover:text-red-700 dark:hover:text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 border border-transparent hover:border-red-200 dark:hover:border-red-900/50 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Reset
@@ -175,7 +175,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           )}
 
           {isUpdating && (
-            <span className="text-xs font-semibold text-amber-800 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+            <span className="text-xs font-semibold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800/60 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
               Updating...
             </span>
@@ -187,20 +187,20 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       <div className="flex flex-wrap items-center gap-4">
         {/* Product Search */}
         <div className="relative min-w-[220px] flex-1 max-w-sm">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#757575]" />
+          <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#757575] dark:text-zinc-400" />
           <input
             type="text"
             value={productSearch}
             onChange={(e) => setProductSearch(e.target.value)}
             placeholder="Search product..."
-            className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-black/20 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-white placeholder-[#888]"
+            className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-black/20 dark:border-white/20 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0075de]/30 focus:border-[#0075de] bg-white dark:bg-[#18181b] text-black dark:text-white placeholder-[#888] dark:placeholder-zinc-500"
           />
         </div>
 
         {/* Categories Multi-Select Pills */}
         {options && options.categories.length > 0 && (
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-bold text-[#444] uppercase tracking-wider flex items-center gap-1 mr-0.5">
+            <span className="text-xs font-bold text-[#444] dark:text-zinc-300 uppercase tracking-wider flex items-center gap-1 mr-0.5">
               <Filter className="w-3.5 h-3.5 text-[#0075de]" /> Category:
             </span>
             {options.categories.map((cat) => {
@@ -213,7 +213,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                   className={`text-xs px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                     active
                       ? 'bg-[#0075de] text-white border-[#0075de] shadow-2xs font-semibold'
-                      : 'bg-white text-[#333] border-black/15 hover:border-black/35 hover:bg-black/5'
+                      : 'bg-white dark:bg-[#18181b] text-[#333] dark:text-zinc-300 border-black/15 dark:border-white/15 hover:border-black/35 dark:hover:border-white/35 hover:bg-black/5 dark:hover:bg-white/10'
                   }`}
                 >
                   {cat}
@@ -226,7 +226,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         {/* Regions Multi-Select Pills */}
         {options && options.regions.length > 0 && (
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-bold text-[#444] uppercase tracking-wider flex items-center gap-1 mr-0.5">
+            <span className="text-xs font-bold text-[#444] dark:text-zinc-300 uppercase tracking-wider flex items-center gap-1 mr-0.5">
               Region:
             </span>
             {options.regions.map((reg) => {
@@ -239,7 +239,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                   className={`text-xs px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                     active
                       ? 'bg-[#0075de] text-white border-[#0075de] shadow-2xs font-semibold'
-                      : 'bg-white text-[#333] border-black/15 hover:border-black/35 hover:bg-black/5'
+                      : 'bg-white dark:bg-[#18181b] text-[#333] dark:text-zinc-300 border-black/15 dark:border-white/15 hover:border-black/35 dark:hover:border-white/35 hover:bg-black/5 dark:hover:bg-white/10'
                   }`}
                 >
                   {reg}

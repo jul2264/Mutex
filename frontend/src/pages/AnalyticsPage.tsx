@@ -222,20 +222,20 @@ export const AnalyticsPage: React.FC = () => {
           <div>
             <Link
               to="/"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#555] hover:text-[#0075de] transition-colors mb-2 group"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#555] dark:text-zinc-400 hover:text-[#0075de] dark:hover:text-[#38bdf8] transition-colors mb-2 group"
             >
               <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
               All Datasets
             </Link>
-            <h1 className="text-2xl font-bold tracking-tight text-black">
+            <h1 className="text-2xl font-bold tracking-tight text-black dark:text-white">
               Key Performance Indicators
             </h1>
-            <p className="text-xs text-[#555] mt-1 font-medium">
+            <p className="text-xs text-[#555] dark:text-zinc-400 mt-1 font-medium">
               {summary?.period
                 ? `Active period: ${summary.period.from || 'Dataset start'} to ${summary.period.to || 'Dataset end'}`
                 : 'Loading active date boundaries...'}
               {summary?.period?.previousFrom && (
-                <span className="ml-1 text-[#0075de] font-semibold">
+                <span className="ml-1 text-[#0075de] dark:text-[#38bdf8] font-semibold">
                   (Comparing with {summary.period.previousFrom} to {summary.period.previousTo})
                 </span>
               )}
@@ -243,13 +243,13 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           {summary && (
-            <div className="text-xs text-[#444] bg-white px-3.5 py-2 rounded-lg border border-black/12 shadow-2xs self-start sm:self-auto flex items-center gap-2.5 font-medium">
+            <div className="text-xs text-[#444] dark:text-zinc-300 bg-white dark:bg-[#121214] px-3.5 py-2 rounded-lg border border-black/12 dark:border-white/10 shadow-2xs self-start sm:self-auto flex items-center gap-2.5 font-medium">
               <span>
-                Orders: <strong className="text-black font-mono font-bold">{summary.orders.toLocaleString()}</strong>
+                Orders: <strong className="text-black dark:text-white font-mono font-bold">{summary.orders.toLocaleString()}</strong>
               </span>
-              <span className="text-black/20">|</span>
+              <span className="text-black/20 dark:text-white/20">|</span>
               <span>
-                Line Items: <strong className="text-black font-mono font-bold">{summary.lineItems.toLocaleString()}</strong>
+                Line Items: <strong className="text-black dark:text-white font-mono font-bold">{summary.lineItems.toLocaleString()}</strong>
               </span>
             </div>
           )}
@@ -291,10 +291,10 @@ export const AnalyticsPage: React.FC = () => {
 
         {/* Empty State Banner when no rows match active filters */}
         {isEmpty ? (
-          <div className="bg-white rounded-xl border border-black/8 shadow-xs p-12 text-center my-6">
+          <div className="bg-white dark:bg-[#121214] rounded-xl border border-black/8 dark:border-white/10 shadow-xs p-12 text-center my-6">
             <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-            <h2 className="text-lg font-bold text-black mb-1">No sales records match these filters</h2>
-            <p className="text-xs text-[#757575] max-w-md mx-auto mb-4">
+            <h2 className="text-lg font-bold text-black dark:text-white mb-1">No sales records match these filters</h2>
+            <p className="text-xs text-[#757575] dark:text-zinc-400 max-w-md mx-auto mb-4">
               Try expanding your date range, clearing category or region filters, or resetting your search term.
             </p>
             <button
@@ -376,14 +376,14 @@ export const AnalyticsPage: React.FC = () => {
             />
 
             {/* Footnotes & Methodological Disclaimers (BR-06) */}
-            <div className="pt-4 border-t border-black/8 text-[11px] text-[#757575] flex items-start gap-2">
-              <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#757575]" />
+            <div className="pt-4 border-t border-black/8 dark:border-white/10 text-[11px] text-[#757575] dark:text-zinc-400 flex items-start gap-2">
+              <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#757575] dark:text-zinc-400" />
               <div>
                 <strong>Accounting Footnote (BR-06):</strong> Revenue is calculated as{' '}
-                <code className="font-mono bg-black/5 px-1 py-0.5 rounded">quantity × list unit price</code>, before tax and discounts.
+                <code className="font-mono bg-black/5 dark:bg-white/10 text-black dark:text-white px-1 py-0.5 rounded">quantity × list unit price</code>, before tax and discounts.
                 Gross profit equals{' '}
-                <code className="font-mono bg-black/5 px-1 py-0.5 rounded">quantity × (unit price − unit cost)</code>. Negative line profits remain visible and reduce totals.
-                All figures displayed in <strong className="text-black">{currency}</strong>.
+                <code className="font-mono bg-black/5 dark:bg-white/10 text-black dark:text-white px-1 py-0.5 rounded">quantity × (unit price − unit cost)</code>. Negative line profits remain visible and reduce totals.
+                All figures displayed in <strong className="text-black dark:text-white">{currency}</strong>.
               </div>
             </div>
           </div>
