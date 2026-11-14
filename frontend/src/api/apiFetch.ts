@@ -15,6 +15,7 @@ export class ApiError extends Error {
     this.requestId = problem?.requestId;
     this.detail = problem?.detail;
     this.fieldErrors = problem?.errors;
+    Object.setPrototypeOf(this, ApiError.prototype);
   }
 }
 

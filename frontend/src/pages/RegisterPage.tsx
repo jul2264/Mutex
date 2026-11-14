@@ -66,17 +66,26 @@ export const RegisterPage: React.FC = () => {
       });
       navigate(next, { replace: true });
     } catch (err: unknown) {
-      if (err instanceof ApiError) {
-        if (err.status === 409) {
+      const isApi = err instanceof ApiError || (typeof err === 'object' && err !== null && 'status' in err);
+      const status = (err as any)?.status;
+      const detail = (err as any)?.detail || (err as any)?.message;
+      const fieldErrors = (err as any)?.fieldErrors;
+
+      if (isApi) {
+        if (
+          status === 409 ||
+          (err as any)?.code === 'EMAIL_ALREADY_REGISTERED' ||
+          (typeof detail === 'string' && detail.toLowerCase().includes('already exists'))
+        ) {
           setGeneralError('An account with this email address already exists. Please log in instead.');
-        } else if (err.status === 400 && err.fieldErrors && err.fieldErrors.length > 0) {
+        } else if (status === 400 && fieldErrors && fieldErrors.length > 0) {
           const map: Record<string, string> = {};
-          err.fieldErrors.forEach((fe) => {
+          fieldErrors.forEach((fe: any) => {
             map[fe.field] = fe.message;
           });
           setFieldErrors(map);
         } else {
-          setGeneralError(err.detail || 'Registration failed. Please check your inputs.');
+          setGeneralError(detail || 'Registration failed. Please check your inputs.');
         }
       } else {
         setGeneralError('Failed to connect to the server. Please check your connection.');
